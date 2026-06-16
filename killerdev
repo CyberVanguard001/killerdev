@@ -5,7 +5,8 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 local SISTEMA_DE_KEYS = {
-    ["77"] = { Tipo = "LIFETIME" }
+    ["77"] = { Tipo = "LIFETIME" },
+    ["1213"] = { Tipo = "LIFETIME" }
 }
 
 local LINK_KEY = "https://killer-main.vercel.app"
@@ -23,7 +24,9 @@ local ScriptsPrincipal = {
     {Nome = "Vylik Hub (One Block)", URL = "https://rawscripts.net/raw/ONE-BLOCK-OP-KEYLESS-SCRIPT-One-Block-51618", UsarTrue = false},
     {Nome = "Enchanted Hub (Lendas da Velocidade)", URL = "https://rawscripts.net/raw/Legends-Of-Speed-Enchanted-Hub-43785", UsarTrue = false},
     {Nome = "Zeck Hub (Lendas do Voleibol)", URL = "https://raw.githubusercontent.com/scriptshubzeck/Zeckhubv1/refs/heads/main/zeckhub", UsarTrue = false},
-    {Nome = "Redz Hub (Meme Sea)", URL = "https://raw.githubusercontent.com/tlredz/Scripts/refs/heads/main/main.luau", UsarTrue = false}
+    {Nome = "Redz Hub (Meme Sea)", URL = "https://raw.githubusercontent.com/tlredz/Scripts/refs/heads/main/main.luau", UsarTrue = false},
+    {Nome = "Vibe Code (Vender Limões)", URL = "https://pastebin.com/raw/e8cVpx8u", UsarTrue = false},
+    {Nome = "Vender Limões", URL = "https://raw.githubusercontent.com/LynX99-9/komtolmmek2script/refs/heads/main/CyraaHub.lua", UsarTrue = false}
 }
 
 local function carregarAimbot() loadstring(game:HttpGet("https://pastebin.com/raw/N0LZ0tWJ"))() end
