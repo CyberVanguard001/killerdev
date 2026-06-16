@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 local SISTEMA_DE_KEYS = {
-    ["99"] = { Tipo = "LIFETIME" },
+    ["77"] = { Tipo = "LIFETIME" },
     ["INDEFINIDA"] = { Tipo = "TEMPO", Segundos = 60 }
 }
 
