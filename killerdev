@@ -1,8 +1,8 @@
-
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
 
 local SISTEMA_DE_KEYS = {
     ["77"] = { Tipo = "LIFETIME" },
@@ -11,7 +11,7 @@ local SISTEMA_DE_KEYS = {
 }
 
 local LINK_KEY = "https://killer-main.vercel.app"
-local DISCORD_DONO = "GLOBAL_KEY"
+local DISCORD_DONO = "Entre no discord pra pegar a key: https://discord.gg/SUdb6363jR"
 
 local ScriptsPrincipal = {
     {Nome = "Nameless Admin (Universal)", URL = "https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source", UsarTrue = false},
@@ -38,20 +38,11 @@ local function carregarBring() loadstring(game:HttpGet("https://pastebin.com/raw
 local function carregarKillerX() loadstring(game:HttpGet("https://pastebin.com/raw/xFy1LbBf"))() end
 
 local GuiParent
-pcall(function()
-    -- gethui() é a forma nativa que o Delta e outros mobiles usam para proteger a GUI
-    GuiParent = gethui and gethui() or game:GetService("CoreGui")
-end)
+pcall(function() GuiParent = gethui and gethui() or game:GetService("CoreGui") end)
+if not GuiParent and LocalPlayer then GuiParent = LocalPlayer:FindFirstChild("PlayerGui") end
 
-if not GuiParent and LocalPlayer then
-    GuiParent = LocalPlayer:FindFirstChild("PlayerGui")
-end
-
--- Destruir interface antiga se existir para não duplicar
 pcall(function()
-    if GuiParent:FindFirstChild("KillerHubSystem") then
-        GuiParent.KillerHubSystem:Destroy()
-    end
+    if GuiParent:FindFirstChild("KillerHubSystem") then GuiParent.KillerHubSystem:Destroy() end
 end)
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -59,178 +50,256 @@ ScreenGui.Name = "KillerHubSystem"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = GuiParent
 
+local function EnviarNotificacao(titulo, texto)
+    task.spawn(function()
+        local NotifGui = Instance.new("ScreenGui")
+        NotifGui.Name = "KillerNotif"
+        NotifGui.Parent = GuiParent
+        
+        local NotifFrame = Instance.new("Frame")
+        NotifFrame.Size = UDim2.new(0, 280, 0, 70)
+        NotifFrame.Position = UDim2.new(1, 20, 1, -100)
+        NotifFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+        NotifFrame.BorderSizePixel = 0
+        NotifFrame.Parent = NotifGui
+        
+        local Stroke = Instance.new("UIStroke")
+        Stroke.Color = Color3.fromRGB(180, 30, 30)
+        Stroke.Thickness = 1.5
+        Stroke.Parent = NotifFrame
+        
+        local Corner = Instance.new("UICorner")
+        Corner.CornerRadius = UDim.new(0, 6)
+        Corner.Parent = NotifFrame
+        
+        local TitleLbl = Instance.new("TextLabel")
+        TitleLbl.Size = UDim2.new(1, -20, 0, 25)
+        TitleLbl.Position = UDim2.new(0, 12, 0, 8)
+        TitleLbl.BackgroundTransparency = 1
+        TitleLbl.Text = titulo
+        TitleLbl.TextColor3 = Color3.fromRGB(240, 45, 45)
+        TitleLbl.TextSize = 14
+        TitleLbl.Font = Enum.Font.SourceSansBold
+        TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLbl.Parent = NotifFrame
+        
+        local DescLbl = Instance.new("TextLabel")
+        DescLbl.Size = UDim2.new(1, -20, 0, 30)
+        DescLbl.Position = UDim2.new(0, 12, 0, 28)
+        DescLbl.BackgroundTransparency = 1
+        DescLbl.Text = texto
+        DescLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+        DescLbl.TextSize = 13
+        DescLbl.Font = Enum.Font.SourceSans
+        DescLbl.TextXAlignment = Enum.TextXAlignment.Left
+        DescLbl.TextWrapped = true
+        DescLbl.Parent = NotifFrame
+        
+        TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -300, 1, -100)}):Play()
+        task.wait(4)
+        TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(1, 20, 1, -100)}):Play()
+        task.wait(0.4)
+        NotifGui:Destroy()
+    end)
+end
+
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 400, 0, 400)
-MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
-MainFrame.BackgroundColor3 = Color3.fromRGB(24, 25, 28)
-MainFrame.BorderSizePixel = 2
-MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Size = UDim2.new(0, 620, 0, 315) -- Reduzido a altura pois removemos os Logs
+MainFrame.Position = UDim2.new(0.5, -310, 0.5, -157)
+MainFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
+MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(160, 30, 30)
+MainStroke.Thickness = 1.8
+MainStroke.Parent = MainFrame
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 6)
+MainCorner.Parent = MainFrame
+
 local ToggleButton = Instance.new("TextButton")
 ToggleButton.Name = "ToggleButton"
 ToggleButton.Size = UDim2.new(0, 45, 0, 45)
-ToggleButton.Position = UDim2.new(0.1, 0, 0.1, 0)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ToggleButton.BorderSizePixel = 0
+ToggleButton.Position = UDim2.new(0.05, 0, 0.05, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
 ToggleButton.Text = "K"
-ToggleButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-ToggleButton.TextSize = 26
+ToggleButton.TextColor3 = Color3.fromRGB(240, 35, 35)
+ToggleButton.TextSize = 24
 ToggleButton.Font = Enum.Font.SourceSansBold
 ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.Parent = ScreenGui
 
-local ToggleCorner = Instance.new("UICorner")
-ToggleCorner.CornerRadius = UDim.new(1, 0)
-ToggleCorner.Parent = ToggleButton
+local TCorner = Instance.new("UICorner")
+TCorner.CornerRadius = UDim.new(1, 0)
+TCorner.Parent = ToggleButton
 
-local ToggleStroke = Instance.new("UIStroke")
-ToggleStroke.Color = Color3.fromRGB(150, 0, 0)
-ToggleStroke.Thickness = 1.5
-ToggleStroke.Parent = ToggleButton
+local TStroke = Instance.new("UIStroke")
+TStroke.Color = Color3.fromRGB(160, 30, 30)
+TStroke.Thickness = 1.5
+TStroke.Parent = ToggleButton
 
-ToggleButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-end)
+ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-local TitleBox = Instance.new("TextLabel")
-TitleBox.Size = UDim2.new(0, 95, 0, 25)
-TitleBox.Position = UDim2.new(0, 12, 0, 12)
-TitleBox.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-TitleBox.BorderSizePixel = 2
-TitleBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TitleBox.Text = "KILLER HUB"
-TitleBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleBox.TextSize = 13
-TitleBox.Font = Enum.Font.SourceSansBold
-TitleBox.Parent = MainFrame
+local LogoBox = Instance.new("Frame")
+LogoBox.Size = UDim2.new(0, 35, 0, 35)
+LogoBox.Position = UDim2.new(0, 12, 0, 12)
+LogoBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
+LogoBox.Parent = MainFrame
+
+local LogoStroke = Instance.new("UIStroke")
+LogoStroke.Color = Color3.fromRGB(160, 30, 30)
+LogoStroke.Thickness = 1.5
+LogoStroke.Parent = LogoBox
+
+local LogoCorner = Instance.new("UICorner")
+LogoCorner.CornerRadius = UDim.new(0, 4)
+LogoCorner.Parent = LogoBox
+
+local LogoText = Instance.new("TextLabel")
+LogoText.Size = UDim2.new(1, 0, 1, 0)
+LogoText.BackgroundTransparency = 1
+LogoText.Text = "K"
+LogoText.TextColor3 = Color3.fromRGB(255, 40, 40)
+LogoText.TextSize = 22
+LogoText.Font = Enum.Font.SourceSansBold
+LogoText.Parent = LogoBox
+
+local MainTitle = Instance.new("TextLabel")
+MainTitle.Size = UDim2.new(0, 150, 0, 20)
+MainTitle.Position = UDim2.new(0, 55, 0, 10)
+MainTitle.BackgroundTransparency = 1
+MainTitle.Text = "KILLER HUB"
+MainTitle.TextColor3 = Color3.fromRGB(235, 40, 40)
+MainTitle.TextSize = 16
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.TextXAlignment = Enum.TextXAlignment.Left
+MainTitle.Parent = MainFrame
+
+local TabContainer = Instance.new("Frame")
+TabContainer.Size = UDim2.new(0, 150, 0, 20)
+TabContainer.Position = UDim2.new(0, 55, 0, 28)
+TabContainer.BackgroundTransparency = 1
+TabContainer.Visible = false
+TabContainer.Parent = MainFrame
+
+local TabScriptsBtn = Instance.new("TextButton")
+TabScriptsBtn.Size = UDim2.new(0, 45, 1, 0)
+TabScriptsBtn.BackgroundTransparency = 1
+TabScriptsBtn.Text = "MAIN"
+TabScriptsBtn.TextColor3 = Color3.fromRGB(50, 205, 50)
+TabScriptsBtn.Font = Enum.Font.SourceSansBold
+TabScriptsBtn.TextSize = 12
+TabScriptsBtn.TextXAlignment = Enum.TextXAlignment.Left
+TabScriptsBtn.Parent = TabContainer
+
+local TabKillerBtn = Instance.new("TextButton")
+TabKillerBtn.Size = UDim2.new(0, 55, 1, 0)
+TabKillerBtn.Position = UDim2.new(0, 45, 0, 0)
+TabKillerBtn.BackgroundTransparency = 1
+TabKillerBtn.Text = "KILLER"
+TabKillerBtn.TextColor3 = Color3.fromRGB(140, 145, 140)
+TabKillerBtn.Font = Enum.Font.SourceSansBold
+TabKillerBtn.TextSize = 12
+TabKillerBtn.TextXAlignment = Enum.TextXAlignment.Left
+TabKillerBtn.Parent = TabContainer
 
 local SearchBox = Instance.new("TextBox")
-SearchBox.Size = UDim2.new(0, 130, 0, 25)
-SearchBox.Position = UDim2.new(0.5, -65, 0, 12)
-SearchBox.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-SearchBox.BorderSizePixel = 2
-SearchBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+SearchBox.Size = UDim2.new(0, 160, 0, 25)
+SearchBox.Position = UDim2.new(1, -180, 0, 15)
+SearchBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
 SearchBox.Text = ""
-SearchBox.PlaceholderText = "Pesquisar..."
-SearchBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
-SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-SearchBox.TextSize = 14
+SearchBox.PlaceholderText = "Pesquisar script..."
+SearchBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+SearchBox.TextColor3 = Color3.fromRGB(245, 245, 245)
+SearchBox.TextSize = 13
 SearchBox.Font = Enum.Font.SourceSans
-SearchBox.ClearTextOnFocus = false
-SearchBox.Visible = false -- Fica invisível na tela de Key
+SearchBox.Visible = false
 SearchBox.Parent = MainFrame
 
-local TimeBox = Instance.new("TextLabel")
-TimeBox.Size = UDim2.new(0, 115, 0, 25)
-TimeBox.Position = UDim2.new(1, -127, 0, 12)
-TimeBox.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-TimeBox.BorderSizePixel = 2
-TimeBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TimeBox.Text = ""
-TimeBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-TimeBox.TextSize = 12
-TimeBox.Font = Enum.Font.SourceSansBold
-TimeBox.Visible = false
-TimeBox.Parent = MainFrame
+local SBS = Instance.new("UIStroke")
+SBS.Color = Color3.fromRGB(55, 55, 58)
+SBS.Thickness = 1
+SBS.Parent = SearchBox
 
-local FooterLeft = Instance.new("TextLabel")
-FooterLeft.Size = UDim2.new(0, 100, 0, 20)
-FooterLeft.Position = UDim2.new(0, 5, 1, -22)
-FooterLeft.BackgroundTransparency = 1
-FooterLeft.Text = "By: KILLER"
-FooterLeft.TextColor3 = Color3.fromRGB(255, 255, 255)
-FooterLeft.TextSize = 11
-FooterLeft.Font = Enum.Font.SourceSansBold
-FooterLeft.TextXAlignment = Enum.TextXAlignment.Left
-FooterLeft.Parent = MainFrame
-
-local FooterRightButton = Instance.new("TextButton")
-FooterRightButton.Size = UDim2.new(0, 200, 0, 20)
-FooterRightButton.Position = UDim2.new(1, -205, 1, -22)
-FooterRightButton.BackgroundTransparency = 1
-FooterRightButton.Text = LINK_KEY
-FooterRightButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-FooterRightButton.TextSize = 11
-FooterRightButton.Font = Enum.Font.SourceSans
-FooterRightButton.TextXAlignment = Enum.TextXAlignment.Right
-FooterRightButton.Parent = MainFrame
-
-FooterRightButton.MouseButton1Click:Connect(function()
-    if setclipboard then
-        pcall(function() setclipboard(LINK_KEY) end)
-        FooterRightButton.Text = "Link Copiado!"
-        task.wait(2)
-        FooterRightButton.Text = LINK_KEY
-    end
-end)
+local SBCorner = Instance.new("UICorner")
+SBCorner.CornerRadius = UDim.new(0, 4)
+SBCorner.Parent = SearchBox
 
 local KeyContainer = Instance.new("Frame")
-KeyContainer.Size = UDim2.new(1, 0, 1, 0)
+KeyContainer.Size = UDim2.new(1, 0, 1, -60)
+KeyContainer.Position = UDim2.new(0, 0, 0, 60)
 KeyContainer.BackgroundTransparency = 1
 KeyContainer.Visible = true
 KeyContainer.Parent = MainFrame
 
-local InstructionLabel = Instance.new("TextLabel")
-InstructionLabel.Size = UDim2.new(0, 150, 0, 40)
-InstructionLabel.Position = UDim2.new(0.5, -75, 0, 140)
-InstructionLabel.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-InstructionLabel.BorderSizePixel = 2
-InstructionLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-InstructionLabel.Text = "Digite sua key:"
-InstructionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-InstructionLabel.TextSize = 18
-InstructionLabel.Font = Enum.Font.SourceSans
-InstructionLabel.Parent = KeyContainer
-
 local KeyTextBox = Instance.new("TextBox")
-KeyTextBox.Size = UDim2.new(0, 300, 0, 45)
-KeyTextBox.Position = UDim2.new(0.5, -150, 0, 195)
-KeyTextBox.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-KeyTextBox.BorderSizePixel = 2
-KeyTextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+KeyTextBox.Size = UDim2.new(0, 280, 0, 35)
+KeyTextBox.Position = UDim2.new(0.5, -140, 0.4, -20)
+KeyTextBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
+KeyTextBox.PlaceholderText = "Insira sua Key..."
+KeyTextBox.PlaceholderColor3 = Color3.fromRGB(110, 110, 110)
 KeyTextBox.Text = ""
-KeyTextBox.PlaceholderText = "Sua key..."
-KeyTextBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
 KeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyTextBox.TextSize = 18
+KeyTextBox.TextSize = 14
 KeyTextBox.Font = Enum.Font.SourceSans
 KeyTextBox.ClearTextOnFocus = false
 KeyTextBox.Parent = KeyContainer
 
+local KBoxStroke = Instance.new("UIStroke")
+KBoxStroke.Color = Color3.fromRGB(160, 30, 30)
+KBoxStroke.Parent = KeyTextBox
+
+local KBoxCorner = Instance.new("UICorner")
+KBoxCorner.CornerRadius = UDim.new(0, 4)
+KBoxCorner.Parent = KeyTextBox
+
 local GetKeyButton = Instance.new("TextButton")
-GetKeyButton.Size = UDim2.new(0, 145, 0, 35)
-GetKeyButton.Position = UDim2.new(0.5, -150, 0, 255)
-GetKeyButton.BackgroundColor3 = Color3.fromRGB(28, 30, 33)
-GetKeyButton.BorderSizePixel = 2
-GetKeyButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-GetKeyButton.Text = "Obtenha uma key"
-GetKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-GetKeyButton.TextSize = 14
+GetKeyButton.Size = UDim2.new(0, 135, 0, 32)
+GetKeyButton.Position = UDim2.new(0.5, -140, 0.4, 25)
+GetKeyButton.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+GetKeyButton.Text = "Obter Key"
+GetKeyButton.TextColor3 = Color3.fromRGB(210, 210, 210)
+GetKeyButton.TextSize = 13
 GetKeyButton.Font = Enum.Font.SourceSans
 GetKeyButton.Parent = KeyContainer
 
+local GKS = Instance.new("UIStroke")
+GKS.Color = Color3.fromRGB(55, 55, 58)
+GKS.Parent = GetKeyButton
+
+local GKCorner = Instance.new("UICorner")
+GKCorner.CornerRadius = UDim.new(0, 4)
+GKCorner.Parent = GetKeyButton
+
 local ValidarButton = Instance.new("TextButton")
-ValidarButton.Size = UDim2.new(0, 145, 0, 35)
-ValidarButton.Position = UDim2.new(0.5, 5, 0, 255)
-ValidarButton.BackgroundColor3 = Color3.fromRGB(28, 30, 33)
-ValidarButton.BorderSizePixel = 2
-ValidarButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ValidarButton.Size = UDim2.new(0, 135, 0, 32)
+ValidarButton.Position = UDim2.new(0.5, 5, 0.4, 25)
+ValidarButton.BackgroundColor3 = Color3.fromRGB(45, 15, 15)
 ValidarButton.Text = "Validar"
-ValidarButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ValidarButton.TextSize = 14
+ValidarButton.TextColor3 = Color3.fromRGB(255, 75, 75)
+ValidarButton.TextSize = 13
 ValidarButton.Font = Enum.Font.SourceSansBold
 ValidarButton.Parent = KeyContainer
+
+local VKS = Instance.new("UIStroke")
+VKS.Color = Color3.fromRGB(160, 30, 30)
+VKS.Parent = ValidarButton
+
+local VCorner = Instance.new("UICorner")
+VCorner.CornerRadius = UDim.new(0, 4)
+VCorner.Parent = ValidarButton
 
 GetKeyButton.MouseButton1Click:Connect(function()
     if setclipboard then
         pcall(function() setclipboard(DISCORD_DONO) end)
         GetKeyButton.Text = "Copiado!"
         task.wait(2)
-        GetKeyButton.Text = "Obtenha uma key"
+        GetKeyButton.Text = "Obter Key"
     end
 end)
 
@@ -240,168 +309,244 @@ HubContainer.BackgroundTransparency = 1
 HubContainer.Visible = false
 HubContainer.Parent = MainFrame
 
-local Sidebar = Instance.new("Frame")
-Sidebar.Size = UDim2.new(0, 110, 0, 300)
-Sidebar.Position = UDim2.new(0, 12, 0, 50)
-Sidebar.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-Sidebar.BorderSizePixel = 2
-Sidebar.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Sidebar.Parent = HubContainer
+local LeftSidebar = Instance.new("Frame")
+LeftSidebar.Size = UDim2.new(0, 140, 0, 195) -- Expandido verticalmente pela saída dos Logs
+LeftSidebar.Position = UDim2.new(0, 12, 0, 60)
+LeftSidebar.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
+LeftSidebar.Parent = HubContainer
+
+local LSStroke = Instance.new("UIStroke")
+LSStroke.Color = Color3.fromRGB(160, 30, 30)
+LSStroke.Parent = LeftSidebar
+
+local LSCorner = Instance.new("UICorner")
+LSCorner.CornerRadius = UDim.new(0, 5)
+LSCorner.Parent = LeftSidebar
+
+local BigLogoText = Instance.new("TextLabel")
+BigLogoText.Size = UDim2.new(1, 0, 0, 80)
+BigLogoText.Position = UDim2.new(0, 0, 0, 30)
+BigLogoText.BackgroundTransparency = 1
+BigLogoText.Text = "KILLER\nHUB"
+BigLogoText.TextColor3 = Color3.fromRGB(235, 40, 40)
+BigLogoText.TextSize = 28
+BigLogoText.Font = Enum.Font.SourceSansBold
+BigLogoText.LineHeight = 0.9
+BigLogoText.Parent = LeftSidebar
+
+local TimeBox = Instance.new("TextLabel")
+TimeBox.Size = UDim2.new(1, 0, 0, 20)
+TimeBox.Position = UDim2.new(0, 0, 1, -35)
+TimeBox.BackgroundTransparency = 1
+TimeBox.Text = ""
+TimeBox.TextColor3 = Color3.fromRGB(180, 35, 35)
+TimeBox.TextSize = 11
+TimeBox.Font = Enum.Font.SourceSansBold
+TimeBox.Parent = LeftSidebar
+
+local TimeKeyBox = Instance.new("Frame")
+TimeKeyBox.Size = UDim2.new(0, 140, 0, 35)
+TimeKeyBox.Position = UDim2.new(0, 12, 0, 265) -- Reposicionado para baixo
+TimeKeyBox.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
+TimeKeyBox.Parent = HubContainer
+
+local TKS = Instance.new("UIStroke")
+TKS.Color = Color3.fromRGB(55, 55, 58)
+TKS.Parent = TimeKeyBox
+
+local TKCorner = Instance.new("UICorner")
+TKCorner.CornerRadius = UDim.new(0, 4)
+TKCorner.Parent = TimeKeyBox
+
+local TimeKeyLabel = Instance.new("TextLabel")
+TimeKeyLabel.Size = UDim2.new(1, 0, 1, 0)
+TimeKeyLabel.BackgroundTransparency = 1
+TimeKeyLabel.Text = "TIME KEY: LIFETIME"
+TimeKeyLabel.TextColor3 = Color3.fromRGB(180, 45, 45)
+TimeKeyLabel.TextSize = 11
+TimeKeyLabel.Font = Enum.Font.SourceSansBold
+TimeKeyLabel.Parent = TimeKeyBox
 
 local ContentArea = Instance.new("Frame")
-ContentArea.Size = UDim2.new(0, 255, 0, 300)
-ContentArea.Position = UDim2.new(0, 132, 0, 50)
+ContentArea.Size = UDim2.new(0, 440, 0, 195) -- Expandido espaço útil
+ContentArea.Position = UDim2.new(0, 165, 0, 60)
 ContentArea.BackgroundTransparency = 1
 ContentArea.Parent = HubContainer
-
-local TabScriptsBtn = Instance.new("TextButton")
-TabScriptsBtn.Size = UDim2.new(1, -10, 0, 35)
-TabScriptsBtn.Position = UDim2.new(0, 5, 0, 5)
-TabScriptsBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 46)
-TabScriptsBtn.BorderSizePixel = 2
-TabScriptsBtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TabScriptsBtn.Text = "Principal"
-TabScriptsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-TabScriptsBtn.Font = Enum.Font.SourceSansBold
-TabScriptsBtn.TextSize = 14
-TabScriptsBtn.Parent = Sidebar
-
-local TabKillerBtn = Instance.new("TextButton")
-TabKillerBtn.Size = UDim2.new(1, -10, 0, 35)
-TabKillerBtn.Position = UDim2.new(0, 5, 0, 45)
-TabKillerBtn.BackgroundColor3 = Color3.fromRGB(24, 25, 28)
-TabKillerBtn.BorderSizePixel = 2
-TabKillerBtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TabKillerBtn.Text = "KILLER"
-TabKillerBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-TabKillerBtn.Font = Enum.Font.SourceSans
-TabKillerBtn.TextSize = 14
-TabKillerBtn.Parent = Sidebar
 
 local PageScripts = Instance.new("ScrollingFrame")
 PageScripts.Size = UDim2.new(1, 0, 1, 0)
 PageScripts.BackgroundTransparency = 1
-PageScripts.ScrollBarThickness = 4
+PageScripts.ScrollBarThickness = 3
 PageScripts.Visible = true
 PageScripts.Parent = ContentArea
 
-local BotoesPrincipal = {}
-
-local posicaoY = 5
-for _, info in ipairs(ScriptsPrincipal) do
-    local sNome = info.Nome
-    local sURL = info.URL
-    local sTrue = info.UsarTrue
-    local sEspecial = info.Especial
-
-    local BotaoScript = Instance.new("TextButton")
-    BotaoScript.Size = UDim2.new(1, -10, 0, 40)
-    BotaoScript.Position = UDim2.new(0, 0, 0, posicaoY)
-    BotaoScript.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-    BotaoScript.BorderSizePixel = 2
-    BotaoScript.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    BotaoScript.Text = sNome
-    BotaoScript.TextColor3 = Color3.fromRGB(255, 255, 255)
-    BotaoScript.TextSize = 14
-    BotaoScript.Font = Enum.Font.SourceSans
-    BotaoScript.Parent = PageScripts
-
-    table.insert(BotoesPrincipal, {
-        Botao = BotaoScript,
-        Nome = string.lower(sNome)
-    })
-
-    BotaoScript.MouseButton1Click:Connect(function()
-        pcall(function()
-            if sEspecial then
-                loadstring(game:HttpGet(sURL))(Settings)
-            elseif sTrue then
-                loadstring(game:HttpGet(sURL, true))()
-            else
-                loadstring(game:HttpGet(sURL))()
-            end
-        end)
-    end)
-    posicaoY = posicaoY + 50
-end
-PageScripts.CanvasSize = UDim2.new(0, 0, 0, posicaoY)
-
-SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    local textoPesquisa = string.lower(SearchBox.Text)
-    local posYAtual = 5
-    
-    for _, item in ipairs(BotoesPrincipal) do
-        if textoPesquisa == "" or string.find(item.Nome, textoPesquisa, 1, true) then
-            item.Botao.Visible = true
-            item.Botao.Position = UDim2.new(0, 0, 0, posYAtual)
-            posYAtual = posYAtual + 50
-        else
-            item.Botao.Visible = false
-        end
-    end
-    
-    PageScripts.CanvasSize = UDim2.new(0, 0, 0, posYAtual)
-end)
+local Grid = Instance.new("UIGridLayout")
+Grid.CellSize = UDim2.new(0, 138, 0, 34) -- Botões levemente mais altos e elegantes
+Grid.CellPadding = UDim2.new(0, 6, 0, 7)
+Grid.SortOrder = Enum.SortOrder.LayoutOrder
+Grid.Parent = PageScripts
 
 local PageKiller = Instance.new("ScrollingFrame")
 PageKiller.Size = UDim2.new(1, 0, 1, 0)
 PageKiller.BackgroundTransparency = 1
-PageKiller.ScrollBarThickness = 4
-PageKiller.CanvasSize = UDim2.new(0, 0, 0, 310)
+PageKiller.ScrollBarThickness = 3
 PageKiller.Visible = false
 PageKiller.Parent = ContentArea
 
-local function CriarBotaoKiller(nome, posY, funcao)
+local Grid2 = Instance.new("UIGridLayout")
+Grid2.CellSize = UDim2.new(0, 138, 0, 34)
+Grid2.CellPadding = UDim2.new(0, 6, 0, 7)
+Grid2.SortOrder = Enum.SortOrder.LayoutOrder
+Grid2.Parent = PageKiller
+
+local BotoesPrincipal = {}
+for _, info in ipairs(ScriptsPrincipal) do
+    local BotaoScript = Instance.new("TextButton")
+    BotaoScript.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+    BotaoScript.Text = info.Nome
+    BotaoScript.TextColor3 = Color3.fromRGB(235, 235, 235)
+    BotaoScript.TextSize = 12
+    BotaoScript.Font = Enum.Font.SourceSans
+    BotaoScript.Parent = PageScripts
+
+    local BStroke = Instance.new("UIStroke")
+    BStroke.Color = Color3.fromRGB(52, 52, 58)
+    BStroke.Thickness = 1
+    BStroke.Parent = BotaoScript
+    
+    local BCorner = Instance.new("UICorner")
+    BCorner.CornerRadius = UDim.new(0, 4)
+    BCorner.Parent = BotaoScript
+
+    BotaoScript.MouseEnter:Connect(function()
+        TweenService:Create(BotaoScript, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(38, 32, 32)}):Play()
+        BStroke.Color = Color3.fromRGB(160, 30, 30)
+    end)
+    BotaoScript.MouseLeave:Connect(function()
+        TweenService:Create(BotaoScript, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(26, 26, 30)}):Play()
+        BStroke.Color = Color3.fromRGB(52, 52, 58)
+    end)
+
+    table.insert(BotoesPrincipal, {Botao = BotaoScript, Nome = string.lower(info.Nome)})
+
+    BotaoScript.MouseButton1Click:Connect(function()
+        pcall(function()
+            if info.Especial then loadstring(game:HttpGet(info.URL))(Settings)
+            elseif info.UsarTrue then loadstring(game:HttpGet(info.URL, true))()
+            else loadstring(game:HttpGet(info.URL))() end
+        end)
+    end)
+end
+
+SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local txt = string.lower(SearchBox.Text)
+    for _, item in ipairs(BotoesPrincipal) do
+        item.Botao.Visible = (txt == "" or string.find(item.Nome, txt, 1, true) ~= nil)
+    end
+end)
+
+local function CriarBotaoKiller(nome, funcao)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 40)
-    btn.Position = UDim2.new(0, 0, 0, posY)
-    btn.BackgroundColor3 = Color3.fromRGB(18, 19, 21)
-    btn.BorderSizePixel = 2
-    btn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    btn.BackgroundColor3 = Color3.fromRGB(32, 22, 22)
     btn.Text = nome
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 16
+    btn.TextColor3 = Color3.fromRGB(245, 215, 215)
+    btn.TextSize = 12
     btn.Font = Enum.Font.SourceSans
     btn.Parent = PageKiller
+
+    local BS = Instance.new("UIStroke")
+    BS.Color = Color3.fromRGB(140, 35, 35)
+    BS.Parent = btn
+    
+    local BC = Instance.new("UICorner")
+    BC.CornerRadius = UDim.new(0, 4)
+    BC.Parent = btn
+
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(48, 20, 20)}):Play()
+    end)
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(32, 22, 22)}):Play()
+    end)
+
     btn.MouseButton1Click:Connect(function() pcall(funcao) end)
 end
 
-CriarBotaoKiller("AimBot (Universal)", 5, carregarAimbot)
-CriarBotaoKiller("Esp (Universal)", 55, carregarEsp)
-CriarBotaoKiller("Waypoint System (Universal)", 105, carregarWaypoint)
-CriarBotaoKiller("Teleporte Hub (Universal)", 155, carregarTeleporte)
-CriarBotaoKiller("Bring Hub (Universal)", 205, carregarBring)
-CriarBotaoKiller("KILLER X (Universal)", 255, carregarKillerX)
+CriarBotaoKiller("AimBot (Universal)", carregarAimbot)
+CriarBotaoKiller("Esp (Universal)", carregarEsp)
+CriarBotaoKiller("Waypoint System", carregarWaypoint)
+CriarBotaoKiller("Teleporte Hub", carregarTeleporte)
+CriarBotaoKiller("Bring Hub", carregarBring)
+CriarBotaoKiller("KILLER X", carregarKillerX)
 
-local function MudarAba(nomeDaAba)
-    PageScripts.Visible = (nomeDaAba == "Principal")
-    PageKiller.Visible = (nomeDaAba == "KILLER")
-    
-    if HubContainer.Visible then
-        SearchBox.Visible = (nomeDaAba == "Principal")
-    end
-    
-    if nomeDaAba == "Principal" then
-        TabScriptsBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 46)
-        TabScriptsBtn.Font = Enum.Font.SourceSansBold
-        TabScriptsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        
-        TabKillerBtn.BackgroundColor3 = Color3.fromRGB(24, 25, 28)
-        TabKillerBtn.Font = Enum.Font.SourceSans
-        TabKillerBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+local function MudarAba(AbaAtiva)
+    if AbaAtiva == "Principal" then
+        PageScripts.Visible = true
+        PageKiller.Visible = false
+        SearchBox.Visible = true
+        TabScriptsBtn.TextColor3 = Color3.fromRGB(50, 205, 50)
+        TabKillerBtn.TextColor3 = Color3.fromRGB(140, 145, 140)
     else
-        TabKillerBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 46)
-        TabKillerBtn.Font = Enum.Font.SourceSansBold
-        TabKillerBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        
-        TabScriptsBtn.BackgroundColor3 = Color3.fromRGB(24, 25, 28)
-        TabScriptsBtn.Font = Enum.Font.SourceSans
-        TabScriptsBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        PageScripts.Visible = false
+        PageKiller.Visible = true
+        SearchBox.Visible = false
+        TabScriptsBtn.TextColor3 = Color3.fromRGB(140, 145, 140)
+        TabKillerBtn.TextColor3 = Color3.fromRGB(50, 205, 50)
     end
 end
 
 TabScriptsBtn.MouseButton1Click:Connect(function() MudarAba("Principal") end)
 TabKillerBtn.MouseButton1Click:Connect(function() MudarAba("KILLER") end)
+
+local FooterFrame = Instance.new("Frame")
+FooterFrame.Size = UDim2.new(0, 440, 0, 35)
+FooterFrame.Position = UDim2.new(0, 165, 0, 265) -- Ajustado para base do menu
+FooterFrame.BackgroundTransparency = 1
+FooterFrame.Parent = HubContainer
+
+local FooterLeft = Instance.new("TextButton")
+FooterLeft.Size = UDim2.new(0, 215, 1, 0)
+FooterLeft.BackgroundColor3 = Color3.fromRGB(40, 15, 15)
+FooterLeft.Text = "By: KILLER"
+FooterLeft.TextColor3 = Color3.fromRGB(245, 245, 245)
+FooterLeft.Font = Enum.Font.SourceSansBold
+FooterLeft.TextSize = 13
+FooterLeft.Parent = FooterFrame
+
+local FLStroke = Instance.new("UIStroke")
+FLStroke.Color = Color3.fromRGB(160, 30, 30)
+FLStroke.Parent = FooterLeft
+
+local FLeftCorner = Instance.new("UICorner")
+FLeftCorner.CornerRadius = UDim.new(0, 4)
+FLeftCorner.Parent = FooterLeft
+
+local FooterRightButton = Instance.new("TextButton")
+FooterRightButton.Size = UDim2.new(0, 215, 1, 0)
+FooterRightButton.Position = UDim2.new(1, -215, 0, 0)
+FooterRightButton.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
+FooterRightButton.Text = LINK_KEY
+FooterRightButton.TextColor3 = Color3.fromRGB(190, 190, 190)
+FooterRightButton.Font = Enum.Font.SourceSans
+FooterRightButton.TextSize = 11
+FooterRightButton.Parent = FooterFrame
+
+local FRStroke = Instance.new("UIStroke")
+FRStroke.Color = Color3.fromRGB(55, 55, 58)
+FRStroke.Parent = FooterRightButton
+
+local FRightCorner = Instance.new("UICorner")
+FRightCorner.CornerRadius = UDim.new(0, 4)
+FRightCorner.Parent = FooterRightButton
+
+FooterRightButton.MouseButton1Click:Connect(function()
+    if setclipboard then
+        pcall(function() setclipboard(LINK_KEY) end)
+        FooterRightButton.Text = "Link Copiado!"
+        task.wait(1.5)
+        FooterRightButton.Text = LINK_KEY
+    end
+end)
 
 ValidarButton.MouseButton1Click:Connect(function()
     local chaveDigitada = KeyTextBox.Text
@@ -420,21 +565,23 @@ ValidarButton.MouseButton1Click:Connect(function()
 
         if dadosDaKey.Tipo == "TEMPO" and tempoRestante <= 0 then
             ValidarButton.Text = "Expirada!"
-            ValidarButton.TextColor3 = Color3.fromRGB(255, 0, 0)
             task.wait(1.5)
             ValidarButton.Text = "Validar"
-            ValidarButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             return
         end
 
+        -- Transição de estados da UI
         KeyContainer.Visible = false
         HubContainer.Visible = true
-        TimeBox.Visible = true
-        SearchBox.Visible = (PageScripts.Visible == true)
+        TabContainer.Visible = true
+        SearchBox.Visible = true
+        
+        EnviarNotificacao("KILLER HUB", "Obrigado por usar o KILLER HUB!")
 
         if dadosDaKey.Tipo == "LIFETIME" then
-            TimeBox.Text = "LIFETIME"
+            TimeBox.Text = "LAST UPDATED: 17-06-26"
         elseif dadosDaKey.Tipo == "TEMPO" then
+            TimeKeyLabel.Text = "TIME KEY: TEMPORÁRIA"
             task.spawn(function()
                 while tempoRestante > 0 and ScreenGui.Parent do
                     local dias = math.floor(tempoRestante / 86400)
@@ -443,19 +590,14 @@ ValidarButton.MouseButton1Click:Connect(function()
                     local segundos = math.floor(tempoRestante % 60)
 
                     TimeBox.Text = string.format("%dD %dH %dM %dS", dias, horas, minutos, segundos)
-                    
-                    pcall(function()
-                        if writefile then writefile(arquivoNome, tostring(tempoRestante)) end
-                    end)
+                    pcall(function() if writefile then writefile(arquivoNome, tostring(tempoRestante)) end end)
 
                     task.wait(1)
                     tempoRestante = tempoRestante - 1
                 end
 
                 if tempoRestante <= 0 then
-                    pcall(function()
-                        if writefile then writefile(arquivoNome, "0") end
-                    end)
+                    pcall(function() if writefile then writefile(arquivoNome, "0") end end)
                     TimeBox.Text = "EXPIRADO"
                     task.wait(1)
                     ScreenGui:Destroy()
@@ -464,103 +606,7 @@ ValidarButton.MouseButton1Click:Connect(function()
         end
     else
         ValidarButton.Text = "Incorreta!"
-        ValidarButton.TextColor3 = Color3.fromRGB(255, 0, 0)
         task.wait(1.5)
         ValidarButton.Text = "Validar"
-        ValidarButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
 end)
-
-local function EnviarNotificacao(titulo, texto)
-    task.spawn(function()
-        local TweenService = game:GetService("TweenService")
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        
-        local GuiParent
-        pcall(function()
-            GuiParent = gethui and gethui() or game:GetService("CoreGui")
-        end)
-        if not GuiParent and LocalPlayer then
-            GuiParent = LocalPlayer:FindFirstChild("PlayerGui")
-        end
-        
-        local NotifGui = Instance.new("ScreenGui")
-        NotifGui.Name = "KillerNotif"
-        NotifGui.Parent = GuiParent
-        
-        local NotifFrame = Instance.new("Frame")
-        NotifFrame.Size = UDim2.new(0, 300, 0, 80)
-        NotifFrame.Position = UDim2.new(1, 20, 1, -120) -- Começa fora da tela
-        NotifFrame.BackgroundColor3 = Color3.fromRGB(30, 31, 34)
-        NotifFrame.BorderSizePixel = 2
-        NotifFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        NotifFrame.Parent = NotifGui
-        
-        local NotifCorner = Instance.new("UICorner")
-        NotifCorner.CornerRadius = UDim.new(0, 8)
-        NotifCorner.Parent = NotifFrame
-        
-        local IconBg = Instance.new("Frame")
-        IconBg.Size = UDim2.new(0, 45, 0, 45)
-        IconBg.Position = UDim2.new(0, 15, 0.5, -22.5)
-        IconBg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        IconBg.BorderSizePixel = 0
-        IconBg.Parent = NotifFrame
-        
-        local IconCorner = Instance.new("UICorner")
-        IconCorner.CornerRadius = UDim.new(1, 0)
-        IconCorner.Parent = IconBg
-        
-        local IconStroke = Instance.new("UIStroke")
-        IconStroke.Color = Color3.fromRGB(150, 0, 0)
-        IconStroke.Thickness = 1.5
-        IconStroke.Parent = IconBg
-        
-        local IconText = Instance.new("TextLabel")
-        IconText.Size = UDim2.new(1, 0, 1, 0)
-        IconText.BackgroundTransparency = 1
-        IconText.Text = "K"
-        IconText.TextColor3 = Color3.fromRGB(255, 0, 0)
-        IconText.TextSize = 26
-        IconText.Font = Enum.Font.SourceSansBold
-        IconText.Parent = IconBg
-        
-        local TitleLbl = Instance.new("TextLabel")
-        TitleLbl.Size = UDim2.new(0, 200, 0, 20)
-        TitleLbl.Position = UDim2.new(0, 75, 0, 15)
-        TitleLbl.BackgroundTransparency = 1
-        TitleLbl.Text = titulo
-        TitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TitleLbl.TextSize = 16
-        TitleLbl.Font = Enum.Font.SourceSansBold
-        TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
-        TitleLbl.Parent = NotifFrame
-        
-        local DescLbl = Instance.new("TextLabel")
-        DescLbl.Size = UDim2.new(0, 210, 0, 35)
-        DescLbl.Position = UDim2.new(0, 75, 0, 35)
-        DescLbl.BackgroundTransparency = 1
-        DescLbl.Text = texto
-        DescLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-        DescLbl.TextSize = 14
-        DescLbl.Font = Enum.Font.SourceSans
-        DescLbl.TextXAlignment = Enum.TextXAlignment.Left
-        DescLbl.TextYAlignment = Enum.TextYAlignment.Top
-        DescLbl.TextWrapped = true
-        DescLbl.Parent = NotifFrame
-        
-        local tweenIn = TweenService:Create(NotifFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -320, 1, -120)})
-        tweenIn:Play()
-        
-        task.wait(5)
-        
-        local tweenOut = TweenService:Create(NotifFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(1, 20, 1, -120)})
-        tweenOut:Play()
-        
-        task.wait(0.5)
-        NotifGui:Destroy()
-    end)
-end
-
-EnviarNotificacao("KILLER HUB", "Obrigado por usar o KILLER HUB!")
