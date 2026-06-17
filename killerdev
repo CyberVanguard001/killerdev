@@ -6,12 +6,12 @@ local LocalPlayer = Players.LocalPlayer
 
 local SISTEMA_DE_KEYS = {
     ["77"] = { Tipo = "LIFETIME" },
-    ["1213"] = { Tipo = "LIFETIME" }
+    ["1213"] = { Tipo = "LIFETIME" },
     ["GLOBAL_KEY"] = { Tipo = "LIFETIME" }
 }
 
 local LINK_KEY = "https://killer-main.vercel.app"
-local DISCORD_DONO = "Key: GLOBAL_KEY"
+local DISCORD_DONO = "GLOBAL_KEY"
 
 local ScriptsPrincipal = {
     {Nome = "Nameless Admin (Universal)", URL = "https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source", UsarTrue = false},
