@@ -7,10 +7,11 @@ local LocalPlayer = Players.LocalPlayer
 local SISTEMA_DE_KEYS = {
     ["77"] = { Tipo = "LIFETIME" },
     ["1213"] = { Tipo = "LIFETIME" }
+    ["GLOBAL_KEY"] = { Tipo = "LIFETIME" }
 }
 
 local LINK_KEY = "https://killer-main.vercel.app"
-local DISCORD_DONO = "Peça uma Key pro dono no discord: killer_exp"
+local DISCORD_DONO = "Key: GLOBAL_KEY"
 
 local ScriptsPrincipal = {
     {Nome = "Nameless Admin (Universal)", URL = "https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source", UsarTrue = false},
@@ -25,7 +26,7 @@ local ScriptsPrincipal = {
     {Nome = "Enchanted Hub (Lendas da Velocidade)", URL = "https://rawscripts.net/raw/Legends-Of-Speed-Enchanted-Hub-43785", UsarTrue = false},
     {Nome = "Zeck Hub (Lendas do Voleibol)", URL = "https://raw.githubusercontent.com/scriptshubzeck/Zeckhubv1/refs/heads/main/zeckhub", UsarTrue = false},
     {Nome = "Redz Hub (Meme Sea)", URL = "https://raw.githubusercontent.com/tlredz/Scripts/refs/heads/main/main.luau", UsarTrue = false},
-    {Nome = "Vibe Code (Vender Limões)", URL = "https://pastebin.com/raw/e8cVpx8u", UsarTrue = false},
+    {Nome = "Argon Hub (Blade Ball)", URL = "https://raw.githubusercontent.com/AgentX771/ArgonHubX/main/Loader.lua", UsarTrue = false},
     {Nome = "Vender Limões", URL = "https://raw.githubusercontent.com/LynX99-9/komtolmmek2script/refs/heads/main/CyraaHub.lua", UsarTrue = false}
 }
 
