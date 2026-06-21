@@ -473,8 +473,8 @@ local function CriarBotaoKiller(nome, funcao)
     btn.MouseButton1Click:Connect(function() pcall(funcao) end)
 end
 
-CriarBotaoKiller("AimBot (Universal)", carregarAimbot)
-CriarBotaoKiller("Esp (Universal)", carregarEsp)
+CriarBotaoKiller("AimBot", carregarAimbot)
+CriarBotaoKiller("Esp", carregarEsp)
 CriarBotaoKiller("Waypoint System", carregarWaypoint)
 CriarBotaoKiller("Teleporte Hub", carregarTeleporte)
 CriarBotaoKiller("Bring Hub", carregarBring)
@@ -571,7 +571,6 @@ ValidarButton.MouseButton1Click:Connect(function()
             return
         end
 
-        -- Transição de estados da UI
         KeyContainer.Visible = false
         HubContainer.Visible = true
         TabContainer.Visible = true
