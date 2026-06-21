@@ -311,7 +311,7 @@ HubContainer.Visible = false
 HubContainer.Parent = MainFrame
 
 local LeftSidebar = Instance.new("Frame")
-LeftSidebar.Size = UDim2.new(0, 140, 0, 195) -- Expandido verticalmente pela saída dos Logs
+LeftSidebar.Size = UDim2.new(0, 140, 0, 195)
 LeftSidebar.Position = UDim2.new(0, 12, 0, 60)
 LeftSidebar.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
 LeftSidebar.Parent = HubContainer
