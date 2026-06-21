@@ -11,7 +11,7 @@ local SISTEMA_DE_KEYS = {
 }
 
 local LINK_KEY = "https://killer-main.vercel.app"
-local DISCORD_DONO = "Entre no discord pra pegar a key: https://discord.gg/SUdb6363jR"
+local DISCORD_DONO = "Entre no discord pra pegar a key: https://discord.gg/VfbvCRJBNv"
 
 local ScriptsPrincipal = {
     {Nome = "Nameless Admin (Universal)", URL = "https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source", UsarTrue = false},
