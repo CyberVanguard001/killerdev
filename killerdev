@@ -580,7 +580,7 @@ ValidarButton.MouseButton1Click:Connect(function()
         EnviarNotificacao("KILLER HUB", "Obrigado por usar o KILLER HUB!")
 
         if dadosDaKey.Tipo == "LIFETIME" then
-            TimeBox.Text = "LAST UPDATED: 17-06-26"
+            TimeBox.Text = "LAST UPDATED: 20-06-26"
         elseif dadosDaKey.Tipo == "TEMPO" then
             TimeKeyLabel.Text = "TIME KEY: TEMPORÁRIA"
             task.spawn(function()
