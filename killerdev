@@ -2,8 +2,14 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+
+local LocalPlayer = Players.LocalPlayer
+while not LocalPlayer do
+    task.wait(0.1)
+    LocalPlayer = Players.LocalPlayer
+end
 
 local SISTEMA_DE_KEYS = {
     ["77"] = { Tipo = "LIFETIME" },
@@ -43,9 +49,7 @@ local GuiParent
 pcall(function() GuiParent = gethui and gethui() or game:GetService("CoreGui") end)
 if not GuiParent and LocalPlayer then GuiParent = LocalPlayer:FindFirstChild("PlayerGui") end
 
-pcall(function()
-    if GuiParent:FindFirstChild("KillerHubSystem") then GuiParent.KillerHubSystem:Destroy() end
-end)
+pcall(function() if GuiParent:FindFirstChild("KillerHubSystem") then GuiParent.KillerHubSystem:Destroy() end end)
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "KillerHubSystem"
@@ -58,45 +62,32 @@ local function EnviarNotificacao(titulo, texto)
         NotifGui.Name = "KillerNotif"
         NotifGui.Parent = GuiParent
         
-        local NotifFrame = Instance.new("Frame")
+        local NotifFrame = Instance.new("Frame", NotifGui)
         NotifFrame.Size = UDim2.new(0, 280, 0, 70)
         NotifFrame.Position = UDim2.new(1, 20, 1, -100)
         NotifFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-        NotifFrame.BorderSizePixel = 0
-        NotifFrame.Parent = NotifGui
+        Instance.new("UIStroke", NotifFrame).Color = Color3.fromRGB(180, 30, 30)
+        Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 6)
         
-        local Stroke = Instance.new("UIStroke")
-        Stroke.Color = Color3.fromRGB(180, 30, 30)
-        Stroke.Thickness = 1.5
-        Stroke.Parent = NotifFrame
-        
-        local Corner = Instance.new("UICorner")
-        Corner.CornerRadius = UDim.new(0, 6)
-        Corner.Parent = NotifFrame
-        
-        local TitleLbl = Instance.new("TextLabel")
+        local TitleLbl = Instance.new("TextLabel", NotifFrame)
         TitleLbl.Size = UDim2.new(1, -20, 0, 25)
         TitleLbl.Position = UDim2.new(0, 12, 0, 8)
         TitleLbl.BackgroundTransparency = 1
         TitleLbl.Text = titulo
         TitleLbl.TextColor3 = Color3.fromRGB(240, 45, 45)
-        TitleLbl.TextSize = 14
         TitleLbl.Font = Enum.Font.SourceSansBold
         TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
-        TitleLbl.Parent = NotifFrame
         
-        local DescLbl = Instance.new("TextLabel")
+        local DescLbl = Instance.new("TextLabel", NotifFrame)
         DescLbl.Size = UDim2.new(1, -20, 0, 30)
         DescLbl.Position = UDim2.new(0, 12, 0, 28)
         DescLbl.BackgroundTransparency = 1
         DescLbl.Text = texto
         DescLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-        DescLbl.TextSize = 13
         DescLbl.Font = Enum.Font.SourceSans
         DescLbl.TextXAlignment = Enum.TextXAlignment.Left
         DescLbl.TextWrapped = true
-        DescLbl.Parent = NotifFrame
-        
+         
         TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -300, 1, -100)}):Play()
         task.wait(4)
         TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(1, 20, 1, -100)}):Play()
@@ -105,26 +96,259 @@ local function EnviarNotificacao(titulo, texto)
     end)
 end
 
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 620, 0, 315) -- Reduzido a altura pois removemos os Logs
+local FlyPanel = Instance.new("Frame", ScreenGui)
+FlyPanel.Size = UDim2.new(0, 160, 0, 185)
+FlyPanel.Position = UDim2.new(0.75, 0, 0.5, -90)
+FlyPanel.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
+FlyPanel.Visible = false
+FlyPanel.Active = true
+FlyPanel.Draggable = true
+FlyPanel.ClipsDescendants = true
+Instance.new("UICorner", FlyPanel).CornerRadius = UDim.new(0, 6)
+
+local FlyStr = Instance.new("UIStroke", FlyPanel)
+FlyStr.Color = Color3.fromRGB(160, 30, 30)
+FlyStr.Thickness = 1.5
+
+local FlyTitle = Instance.new("TextLabel", FlyPanel)
+FlyTitle.Size = UDim2.new(1, 0, 0, 30)
+FlyTitle.BackgroundTransparency = 1
+FlyTitle.Text = "KILLER FLY"
+FlyTitle.TextColor3 = Color3.fromRGB(235, 40, 40)
+FlyTitle.Font = Enum.Font.SourceSansBold
+FlyTitle.TextSize = 16
+
+local btnMinFly = Instance.new("TextButton", FlyPanel)
+btnMinFly.Size = UDim2.new(0, 30, 0, 30)
+btnMinFly.Position = UDim2.new(1, -30, 0, 0)
+btnMinFly.BackgroundTransparency = 1
+btnMinFly.Text = "-"
+btnMinFly.TextColor3 = Color3.fromRGB(200, 200, 200)
+btnMinFly.Font = Enum.Font.SourceSansBold
+btnMinFly.TextSize = 20
+
+local flyMinimized = false
+btnMinFly.MouseButton1Click:Connect(function()
+    flyMinimized = not flyMinimized
+    if flyMinimized then
+        btnMinFly.Text = "+"
+        TweenService:Create(FlyPanel, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 160, 0, 30)}):Play()
+    else
+        btnMinFly.Text = "-"
+        TweenService:Create(FlyPanel, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 160, 0, 185)}):Play()
+    end
+end)
+
+local FlyControls = Instance.new("Frame", FlyPanel)
+FlyControls.Size = UDim2.new(1, 0, 1, -30)
+FlyControls.Position = UDim2.new(0, 0, 0, 30)
+FlyControls.BackgroundTransparency = 1
+
+local btnUp = Instance.new("TextButton", FlyControls)
+btnUp.Size = UDim2.new(0, 65, 0, 45)
+btnUp.Position = UDim2.new(0, 10, 0, 5)
+btnUp.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+btnUp.Text = "UP"
+btnUp.TextColor3 = Color3.fromRGB(235, 235, 235)
+btnUp.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btnUp).CornerRadius = UDim.new(0, 4)
+Instance.new("UIStroke", btnUp).Color = Color3.fromRGB(52, 52, 58)
+
+local btnDown = Instance.new("TextButton", FlyControls)
+btnDown.Size = UDim2.new(0, 65, 0, 45)
+btnDown.Position = UDim2.new(0, 10, 0, 60)
+btnDown.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+btnDown.Text = "DOWN"
+btnDown.TextColor3 = Color3.fromRGB(235, 235, 235)
+btnDown.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btnDown).CornerRadius = UDim.new(0, 4)
+Instance.new("UIStroke", btnDown).Color = Color3.fromRGB(52, 52, 58)
+
+local btnPlus = Instance.new("TextButton", FlyControls)
+btnPlus.Size = UDim2.new(0, 65, 0, 25)
+btnPlus.Position = UDim2.new(0, 85, 0, 5)
+btnPlus.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+btnPlus.Text = "+"
+btnPlus.TextColor3 = Color3.fromRGB(235, 235, 235)
+btnPlus.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btnPlus).CornerRadius = UDim.new(0, 4)
+Instance.new("UIStroke", btnPlus).Color = Color3.fromRGB(52, 52, 58)
+
+local speedLbl = Instance.new("TextLabel", FlyControls)
+speedLbl.Size = UDim2.new(0, 65, 0, 20)
+speedLbl.Position = UDim2.new(0, 85, 0, 35)
+speedLbl.BackgroundTransparency = 1
+speedLbl.Text = "1"
+speedLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedLbl.Font = Enum.Font.SourceSansBold
+speedLbl.TextSize = 16
+
+local btnMinus = Instance.new("TextButton", FlyControls)
+btnMinus.Size = UDim2.new(0, 65, 0, 25)
+btnMinus.Position = UDim2.new(0, 85, 0, 60)
+btnMinus.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+btnMinus.Text = "-"
+btnMinus.TextColor3 = Color3.fromRGB(235, 235, 235)
+btnMinus.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btnMinus).CornerRadius = UDim.new(0, 4)
+Instance.new("UIStroke", btnMinus).Color = Color3.fromRGB(52, 52, 58)
+
+local btnFlyToggle = Instance.new("TextButton", FlyControls)
+btnFlyToggle.Size = UDim2.new(1, -20, 0, 35)
+btnFlyToggle.Position = UDim2.new(0, 10, 0, 115)
+btnFlyToggle.BackgroundColor3 = Color3.fromRGB(45, 15, 15)
+btnFlyToggle.Text = "FLY: OFF"
+btnFlyToggle.TextColor3 = Color3.fromRGB(255, 100, 100)
+btnFlyToggle.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btnFlyToggle).CornerRadius = UDim.new(0, 4)
+local btnFlyStr = Instance.new("UIStroke", btnFlyToggle)
+btnFlyStr.Color = Color3.fromRGB(160, 30, 30)
+
+local flying = false
+local flySpeed = 1
+local flyUp = false
+local flyDown = false
+local bodyVel, bodyGyro
+
+btnPlus.MouseButton1Click:Connect(function()
+    flySpeed = math.clamp(flySpeed + 1, 1, 10)
+    speedLbl.Text = tostring(flySpeed)
+end)
+btnMinus.MouseButton1Click:Connect(function()
+    flySpeed = math.clamp(flySpeed - 1, 1, 10)
+    speedLbl.Text = tostring(flySpeed)
+end)
+
+local function bindHold(btn, varName)
+    btn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            if varName == "Up" then flyUp = true else flyDown = true end
+            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(40, 40, 45)}):Play()
+        end
+    end)
+    btn.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            if varName == "Up" then flyUp = false else flyDown = false end
+            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(26, 26, 30)}):Play()
+        end
+    end)
+end
+bindHold(btnUp, "Up")
+bindHold(btnDown, "Down")
+
+local function startFly()
+    flying = true
+    local char = LocalPlayer.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChild("Humanoid")
+    if not hrp or not hum then return end
+    
+    bodyVel = Instance.new("BodyVelocity")
+    bodyVel.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bodyVel.Velocity = Vector3.zero
+    bodyVel.Parent = hrp
+
+    bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bodyGyro.P = 9e4
+    bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+    bodyGyro.Parent = hrp
+    
+    hum:ChangeState(Enum.HumanoidStateType.Physics)
+    
+    RunService:BindToRenderStep("KillerFlyLoop", Enum.RenderPriority.Camera.Value, function()
+        if not flying or not char:FindFirstChild("Humanoid") then return end
+        local cam = workspace.CurrentCamera
+        
+        bodyGyro.CFrame = cam.CFrame
+        hum:ChangeState(Enum.HumanoidStateType.Physics)
+        
+        local moveDir = hum.MoveDirection
+        local velocity = Vector3.zero
+        
+        if moveDir.Magnitude > 0 then
+            
+            local camFwd = Vector3.new(cam.CFrame.LookVector.X, 0, cam.CFrame.LookVector.Z).Unit
+            local camRgt = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z).Unit
+            
+            local fwdIntent = moveDir:Dot(camFwd)
+            local rgtIntent = moveDir:Dot(camRgt)
+            
+            velocity = (cam.CFrame.LookVector * fwdIntent) + (cam.CFrame.RightVector * rgtIntent)
+        end
+        
+        if velocity.Magnitude > 0 then
+            velocity = velocity.Unit * (flySpeed * 50)
+        end
+        
+        -- Override vertical dos botões UP / DOWN da tela
+        if flyUp then velocity = velocity + Vector3.new(0, flySpeed * 50, 0) end
+        if flyDown then velocity = velocity + Vector3.new(0, -flySpeed * 50, 0) end
+        
+        bodyVel.Velocity = velocity
+    end)
+end
+
+local function stopFly()
+    flying = false
+    RunService:UnbindFromRenderStep("KillerFlyLoop")
+    if bodyVel then bodyVel:Destroy() end
+    if bodyGyro then bodyGyro:Destroy() end
+    local char = LocalPlayer.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end
+
+btnFlyToggle.MouseButton1Click:Connect(function()
+    if not flying then
+        btnFlyToggle.Text = "FLY: ON"
+        btnFlyToggle.BackgroundColor3 = Color3.fromRGB(15, 45, 15)
+        btnFlyToggle.TextColor3 = Color3.fromRGB(100, 255, 100)
+        btnFlyStr.Color = Color3.fromRGB(30, 160, 30)
+        startFly()
+    else
+        btnFlyToggle.Text = "FLY: OFF"
+        btnFlyToggle.BackgroundColor3 = Color3.fromRGB(45, 15, 15)
+        btnFlyToggle.TextColor3 = Color3.fromRGB(255, 100, 100)
+        btnFlyStr.Color = Color3.fromRGB(160, 30, 30)
+        stopFly()
+    end
+end)
+
+local noclipConnection
+local function ToggleNoclip(estado)
+    if estado then
+        noclipConnection = RunService.Stepped:Connect(function()
+            if LocalPlayer.Character then
+                for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") and v.CanCollide then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+    end
+end
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 620, 0, 315)
 MainFrame.Position = UDim2.new(0.5, -310, 0.5, -157)
 MainFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
-MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
 
-local MainStroke = Instance.new("UIStroke")
-MainStroke.Color = Color3.fromRGB(160, 30, 30)
-MainStroke.Thickness = 1.8
-MainStroke.Parent = MainFrame
+Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(160, 30, 30)
+Instance.new("UIStroke", MainFrame).Thickness = 1.8
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 6)
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 6)
-MainCorner.Parent = MainFrame
-
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Name = "ToggleButton"
+local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 45, 0, 45)
 ToggleButton.Position = UDim2.new(0.05, 0, 0.05, 0)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
@@ -134,44 +358,31 @@ ToggleButton.TextSize = 24
 ToggleButton.Font = Enum.Font.SourceSansBold
 ToggleButton.Active = true
 ToggleButton.Draggable = true
-ToggleButton.Parent = ScreenGui
-
-local TCorner = Instance.new("UICorner")
-TCorner.CornerRadius = UDim.new(1, 0)
-TCorner.Parent = ToggleButton
-
-local TStroke = Instance.new("UIStroke")
-TStroke.Color = Color3.fromRGB(160, 30, 30)
-TStroke.Thickness = 1.5
-TStroke.Parent = ToggleButton
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(1, 0)
+local TS = Instance.new("UIStroke", ToggleButton)
+TS.Color = Color3.fromRGB(160, 30, 30)
+TS.Thickness = 1.5
 
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-local LogoBox = Instance.new("Frame")
+local LogoBox = Instance.new("Frame", MainFrame)
 LogoBox.Size = UDim2.new(0, 35, 0, 35)
 LogoBox.Position = UDim2.new(0, 12, 0, 12)
 LogoBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
-LogoBox.Parent = MainFrame
+local LS = Instance.new("UIStroke", LogoBox)
+LS.Color = Color3.fromRGB(160, 30, 30)
+LS.Thickness = 1.5
+Instance.new("UICorner", LogoBox).CornerRadius = UDim.new(0, 4)
 
-local LogoStroke = Instance.new("UIStroke")
-LogoStroke.Color = Color3.fromRGB(160, 30, 30)
-LogoStroke.Thickness = 1.5
-LogoStroke.Parent = LogoBox
-
-local LogoCorner = Instance.new("UICorner")
-LogoCorner.CornerRadius = UDim.new(0, 4)
-LogoCorner.Parent = LogoBox
-
-local LogoText = Instance.new("TextLabel")
+local LogoText = Instance.new("TextLabel", LogoBox)
 LogoText.Size = UDim2.new(1, 0, 1, 0)
 LogoText.BackgroundTransparency = 1
 LogoText.Text = "K"
 LogoText.TextColor3 = Color3.fromRGB(255, 40, 40)
 LogoText.TextSize = 22
 LogoText.Font = Enum.Font.SourceSansBold
-LogoText.Parent = LogoBox
 
-local MainTitle = Instance.new("TextLabel")
+local MainTitle = Instance.new("TextLabel", MainFrame)
 MainTitle.Size = UDim2.new(0, 150, 0, 20)
 MainTitle.Position = UDim2.new(0, 55, 0, 10)
 MainTitle.BackgroundTransparency = 1
@@ -180,16 +391,14 @@ MainTitle.TextColor3 = Color3.fromRGB(235, 40, 40)
 MainTitle.TextSize = 16
 MainTitle.Font = Enum.Font.SourceSansBold
 MainTitle.TextXAlignment = Enum.TextXAlignment.Left
-MainTitle.Parent = MainFrame
 
-local TabContainer = Instance.new("Frame")
+local TabContainer = Instance.new("Frame", MainFrame)
 TabContainer.Size = UDim2.new(0, 150, 0, 20)
 TabContainer.Position = UDim2.new(0, 55, 0, 28)
 TabContainer.BackgroundTransparency = 1
 TabContainer.Visible = false
-TabContainer.Parent = MainFrame
 
-local TabScriptsBtn = Instance.new("TextButton")
+local TabScriptsBtn = Instance.new("TextButton", TabContainer)
 TabScriptsBtn.Size = UDim2.new(0, 45, 1, 0)
 TabScriptsBtn.BackgroundTransparency = 1
 TabScriptsBtn.Text = "MAIN"
@@ -197,9 +406,8 @@ TabScriptsBtn.TextColor3 = Color3.fromRGB(50, 205, 50)
 TabScriptsBtn.Font = Enum.Font.SourceSansBold
 TabScriptsBtn.TextSize = 12
 TabScriptsBtn.TextXAlignment = Enum.TextXAlignment.Left
-TabScriptsBtn.Parent = TabContainer
 
-local TabKillerBtn = Instance.new("TextButton")
+local TabKillerBtn = Instance.new("TextButton", TabContainer)
 TabKillerBtn.Size = UDim2.new(0, 55, 1, 0)
 TabKillerBtn.Position = UDim2.new(0, 45, 0, 0)
 TabKillerBtn.BackgroundTransparency = 1
@@ -208,94 +416,55 @@ TabKillerBtn.TextColor3 = Color3.fromRGB(140, 145, 140)
 TabKillerBtn.Font = Enum.Font.SourceSansBold
 TabKillerBtn.TextSize = 12
 TabKillerBtn.TextXAlignment = Enum.TextXAlignment.Left
-TabKillerBtn.Parent = TabContainer
 
-local SearchBox = Instance.new("TextBox")
+local SearchBox = Instance.new("TextBox", MainFrame)
 SearchBox.Size = UDim2.new(0, 160, 0, 25)
 SearchBox.Position = UDim2.new(1, -180, 0, 15)
 SearchBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
 SearchBox.Text = ""
 SearchBox.PlaceholderText = "Pesquisar script..."
-SearchBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
 SearchBox.TextColor3 = Color3.fromRGB(245, 245, 245)
-SearchBox.TextSize = 13
 SearchBox.Font = Enum.Font.SourceSans
 SearchBox.Visible = false
-SearchBox.Parent = MainFrame
-
-local SBS = Instance.new("UIStroke")
-SBS.Color = Color3.fromRGB(55, 55, 58)
-SBS.Thickness = 1
-SBS.Parent = SearchBox
-
-local SBCorner = Instance.new("UICorner")
-SBCorner.CornerRadius = UDim.new(0, 4)
-SBCorner.Parent = SearchBox
-
-local KeyContainer = Instance.new("Frame")
+Instance.new("UIStroke", SearchBox).Color = Color3.fromRGB(55, 55, 58)
+Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 4)
+ 
+local KeyContainer = Instance.new("Frame", MainFrame)
 KeyContainer.Size = UDim2.new(1, 0, 1, -60)
 KeyContainer.Position = UDim2.new(0, 0, 0, 60)
 KeyContainer.BackgroundTransparency = 1
-KeyContainer.Visible = true
-KeyContainer.Parent = MainFrame
-
-local KeyTextBox = Instance.new("TextBox")
+ 
+local KeyTextBox = Instance.new("TextBox", KeyContainer)
 KeyTextBox.Size = UDim2.new(0, 280, 0, 35)
 KeyTextBox.Position = UDim2.new(0.5, -140, 0.4, -20)
 KeyTextBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
 KeyTextBox.PlaceholderText = "Insira sua Key..."
-KeyTextBox.PlaceholderColor3 = Color3.fromRGB(110, 110, 110)
 KeyTextBox.Text = ""
 KeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyTextBox.TextSize = 14
 KeyTextBox.Font = Enum.Font.SourceSans
-KeyTextBox.ClearTextOnFocus = false
-KeyTextBox.Parent = KeyContainer
-
-local KBoxStroke = Instance.new("UIStroke")
-KBoxStroke.Color = Color3.fromRGB(160, 30, 30)
-KBoxStroke.Parent = KeyTextBox
-
-local KBoxCorner = Instance.new("UICorner")
-KBoxCorner.CornerRadius = UDim.new(0, 4)
-KBoxCorner.Parent = KeyTextBox
-
-local GetKeyButton = Instance.new("TextButton")
+Instance.new("UIStroke", KeyTextBox).Color = Color3.fromRGB(160, 30, 30)
+Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 4)
+ 
+local GetKeyButton = Instance.new("TextButton", KeyContainer)
 GetKeyButton.Size = UDim2.new(0, 135, 0, 32)
 GetKeyButton.Position = UDim2.new(0.5, -140, 0.4, 25)
 GetKeyButton.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
 GetKeyButton.Text = "Obter Key"
 GetKeyButton.TextColor3 = Color3.fromRGB(210, 210, 210)
-GetKeyButton.TextSize = 13
 GetKeyButton.Font = Enum.Font.SourceSans
-GetKeyButton.Parent = KeyContainer
-
-local GKS = Instance.new("UIStroke")
-GKS.Color = Color3.fromRGB(55, 55, 58)
-GKS.Parent = GetKeyButton
-
-local GKCorner = Instance.new("UICorner")
-GKCorner.CornerRadius = UDim.new(0, 4)
-GKCorner.Parent = GetKeyButton
-
-local ValidarButton = Instance.new("TextButton")
+Instance.new("UIStroke", GetKeyButton).Color = Color3.fromRGB(55, 55, 58)
+Instance.new("UICorner", GetKeyButton).CornerRadius = UDim.new(0, 4)
+ 
+local ValidarButton = Instance.new("TextButton", KeyContainer)
 ValidarButton.Size = UDim2.new(0, 135, 0, 32)
 ValidarButton.Position = UDim2.new(0.5, 5, 0.4, 25)
 ValidarButton.BackgroundColor3 = Color3.fromRGB(45, 15, 15)
 ValidarButton.Text = "Validar"
 ValidarButton.TextColor3 = Color3.fromRGB(255, 75, 75)
-ValidarButton.TextSize = 13
 ValidarButton.Font = Enum.Font.SourceSansBold
-ValidarButton.Parent = KeyContainer
-
-local VKS = Instance.new("UIStroke")
-VKS.Color = Color3.fromRGB(160, 30, 30)
-VKS.Parent = ValidarButton
-
-local VCorner = Instance.new("UICorner")
-VCorner.CornerRadius = UDim.new(0, 4)
-VCorner.Parent = ValidarButton
-
+Instance.new("UIStroke", ValidarButton).Color = Color3.fromRGB(160, 30, 30)
+Instance.new("UICorner", ValidarButton).CornerRadius = UDim.new(0, 4)
+ 
 GetKeyButton.MouseButton1Click:Connect(function()
     if setclipboard then
         pcall(function() setclipboard(DISCORD_DONO) end)
@@ -304,28 +473,20 @@ GetKeyButton.MouseButton1Click:Connect(function()
         GetKeyButton.Text = "Obter Key"
     end
 end)
-
-local HubContainer = Instance.new("Frame")
+ 
+local HubContainer = Instance.new("Frame", MainFrame)
 HubContainer.Size = UDim2.new(1, 0, 1, 0)
 HubContainer.BackgroundTransparency = 1
 HubContainer.Visible = false
-HubContainer.Parent = MainFrame
-
-local LeftSidebar = Instance.new("Frame")
+ 
+local LeftSidebar = Instance.new("Frame", HubContainer)
 LeftSidebar.Size = UDim2.new(0, 140, 0, 195)
 LeftSidebar.Position = UDim2.new(0, 12, 0, 60)
 LeftSidebar.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
-LeftSidebar.Parent = HubContainer
-
-local LSStroke = Instance.new("UIStroke")
-LSStroke.Color = Color3.fromRGB(160, 30, 30)
-LSStroke.Parent = LeftSidebar
-
-local LSCorner = Instance.new("UICorner")
-LSCorner.CornerRadius = UDim.new(0, 5)
-LSCorner.Parent = LeftSidebar
-
-local BigLogoText = Instance.new("TextLabel")
+Instance.new("UIStroke", LeftSidebar).Color = Color3.fromRGB(160, 30, 30)
+Instance.new("UICorner", LeftSidebar).CornerRadius = UDim.new(0, 5)
+ 
+local BigLogoText = Instance.new("TextLabel", LeftSidebar)
 BigLogoText.Size = UDim2.new(1, 0, 0, 80)
 BigLogoText.Position = UDim2.new(0, 0, 0, 30)
 BigLogoText.BackgroundTransparency = 1
@@ -334,103 +495,69 @@ BigLogoText.TextColor3 = Color3.fromRGB(235, 40, 40)
 BigLogoText.TextSize = 28
 BigLogoText.Font = Enum.Font.SourceSansBold
 BigLogoText.LineHeight = 0.9
-BigLogoText.Parent = LeftSidebar
-
-local TimeBox = Instance.new("TextLabel")
+ 
+local TimeBox = Instance.new("TextLabel", LeftSidebar)
 TimeBox.Size = UDim2.new(1, 0, 0, 20)
 TimeBox.Position = UDim2.new(0, 0, 1, -35)
 TimeBox.BackgroundTransparency = 1
-TimeBox.Text = ""
 TimeBox.TextColor3 = Color3.fromRGB(180, 35, 35)
-TimeBox.TextSize = 11
 TimeBox.Font = Enum.Font.SourceSansBold
-TimeBox.Parent = LeftSidebar
-
-local TimeKeyBox = Instance.new("Frame")
+ 
+local TimeKeyBox = Instance.new("Frame", HubContainer)
 TimeKeyBox.Size = UDim2.new(0, 140, 0, 35)
-TimeKeyBox.Position = UDim2.new(0, 12, 0, 265) -- Reposicionado para baixo
+TimeKeyBox.Position = UDim2.new(0, 12, 0, 265)
 TimeKeyBox.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
-TimeKeyBox.Parent = HubContainer
-
-local TKS = Instance.new("UIStroke")
-TKS.Color = Color3.fromRGB(55, 55, 58)
-TKS.Parent = TimeKeyBox
-
-local TKCorner = Instance.new("UICorner")
-TKCorner.CornerRadius = UDim.new(0, 4)
-TKCorner.Parent = TimeKeyBox
-
-local TimeKeyLabel = Instance.new("TextLabel")
+Instance.new("UIStroke", TimeKeyBox).Color = Color3.fromRGB(55, 55, 58)
+Instance.new("UICorner", TimeKeyBox).CornerRadius = UDim.new(0, 4)
+ 
+local TimeKeyLabel = Instance.new("TextLabel", TimeKeyBox)
 TimeKeyLabel.Size = UDim2.new(1, 0, 1, 0)
 TimeKeyLabel.BackgroundTransparency = 1
 TimeKeyLabel.Text = "TIME KEY: LIFETIME"
 TimeKeyLabel.TextColor3 = Color3.fromRGB(180, 45, 45)
-TimeKeyLabel.TextSize = 11
 TimeKeyLabel.Font = Enum.Font.SourceSansBold
-TimeKeyLabel.Parent = TimeKeyBox
-
-local ContentArea = Instance.new("Frame")
-ContentArea.Size = UDim2.new(0, 440, 0, 195) -- Expandido espaço útil
+ 
+local ContentArea = Instance.new("Frame", HubContainer)
+ContentArea.Size = UDim2.new(0, 440, 0, 195)
 ContentArea.Position = UDim2.new(0, 165, 0, 60)
 ContentArea.BackgroundTransparency = 1
-ContentArea.Parent = HubContainer
-
-local PageScripts = Instance.new("ScrollingFrame")
+ 
+local PageScripts = Instance.new("ScrollingFrame", ContentArea)
 PageScripts.Size = UDim2.new(1, 0, 1, 0)
 PageScripts.BackgroundTransparency = 1
 PageScripts.ScrollBarThickness = 3
-PageScripts.Visible = true
-PageScripts.Parent = ContentArea
-
-local Grid = Instance.new("UIGridLayout")
-Grid.CellSize = UDim2.new(0, 138, 0, 34) -- Botões levemente mais altos e elegantes
+ 
+local Grid = Instance.new("UIGridLayout", PageScripts)
+Grid.CellSize = UDim2.new(0, 138, 0, 34)
 Grid.CellPadding = UDim2.new(0, 6, 0, 7)
-Grid.SortOrder = Enum.SortOrder.LayoutOrder
-Grid.Parent = PageScripts
-
-local PageKiller = Instance.new("ScrollingFrame")
+ 
+local PageKiller = Instance.new("ScrollingFrame", ContentArea)
 PageKiller.Size = UDim2.new(1, 0, 1, 0)
 PageKiller.BackgroundTransparency = 1
 PageKiller.ScrollBarThickness = 3
 PageKiller.Visible = false
-PageKiller.Parent = ContentArea
-
-local Grid2 = Instance.new("UIGridLayout")
+ 
+local Grid2 = Instance.new("UIGridLayout", PageKiller)
 Grid2.CellSize = UDim2.new(0, 138, 0, 34)
 Grid2.CellPadding = UDim2.new(0, 6, 0, 7)
-Grid2.SortOrder = Enum.SortOrder.LayoutOrder
-Grid2.Parent = PageKiller
-
+ 
 local BotoesPrincipal = {}
 for _, info in ipairs(ScriptsPrincipal) do
-    local BotaoScript = Instance.new("TextButton")
+    local BotaoScript = Instance.new("TextButton", PageScripts)
     BotaoScript.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
     BotaoScript.Text = info.Nome
     BotaoScript.TextColor3 = Color3.fromRGB(235, 235, 235)
-    BotaoScript.TextSize = 12
     BotaoScript.Font = Enum.Font.SourceSans
-    BotaoScript.Parent = PageScripts
-
-    local BStroke = Instance.new("UIStroke")
-    BStroke.Color = Color3.fromRGB(52, 52, 58)
-    BStroke.Thickness = 1
-    BStroke.Parent = BotaoScript
-    
-    local BCorner = Instance.new("UICorner")
-    BCorner.CornerRadius = UDim.new(0, 4)
-    BCorner.Parent = BotaoScript
-
-    BotaoScript.MouseEnter:Connect(function()
-        TweenService:Create(BotaoScript, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(38, 32, 32)}):Play()
-        BStroke.Color = Color3.fromRGB(160, 30, 30)
-    end)
-    BotaoScript.MouseLeave:Connect(function()
-        TweenService:Create(BotaoScript, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(26, 26, 30)}):Play()
-        BStroke.Color = Color3.fromRGB(52, 52, 58)
-    end)
-
+ 
+    local BS = Instance.new("UIStroke", BotaoScript)
+    BS.Color = Color3.fromRGB(52, 52, 58)
+    Instance.new("UICorner", BotaoScript).CornerRadius = UDim.new(0, 4)
+ 
+    BotaoScript.MouseEnter:Connect(function() TweenService:Create(BotaoScript, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(38, 32, 32)}):Play() BS.Color = Color3.fromRGB(160, 30, 30) end)
+    BotaoScript.MouseLeave:Connect(function() TweenService:Create(BotaoScript, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(26, 26, 30)}):Play() BS.Color = Color3.fromRGB(52, 52, 58) end)
+ 
     table.insert(BotoesPrincipal, {Botao = BotaoScript, Nome = string.lower(info.Nome)})
-
+ 
     BotaoScript.MouseButton1Click:Connect(function()
         pcall(function()
             if info.Especial then loadstring(game:HttpGet(info.URL))(Settings)
@@ -439,48 +566,101 @@ for _, info in ipairs(ScriptsPrincipal) do
         end)
     end)
 end
-
+ 
 SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
     local txt = string.lower(SearchBox.Text)
     for _, item in ipairs(BotoesPrincipal) do
         item.Botao.Visible = (txt == "" or string.find(item.Nome, txt, 1, true) ~= nil)
     end
 end)
-
+ 
 local function CriarBotaoKiller(nome, funcao)
-    local btn = Instance.new("TextButton")
-    btn.BackgroundColor3 = Color3.fromRGB(32, 22, 22)
+    local btn = Instance.new("TextButton", PageKiller)
+    -- Cor preta padrão para combinar com os interruptores
+    btn.BackgroundColor3 = Color3.fromRGB(26, 26, 30) 
     btn.Text = nome
-    btn.TextColor3 = Color3.fromRGB(245, 215, 215)
-    btn.TextSize = 12
+    btn.TextColor3 = Color3.fromRGB(235, 235, 235)
     btn.Font = Enum.Font.SourceSans
-    btn.Parent = PageKiller
-
-    local BS = Instance.new("UIStroke")
-    BS.Color = Color3.fromRGB(140, 35, 35)
-    BS.Parent = btn
-    
-    local BC = Instance.new("UICorner")
-    BC.CornerRadius = UDim.new(0, 4)
-    BC.Parent = btn
-
-    btn.MouseEnter:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(48, 20, 20)}):Play()
+    local BS = Instance.new("UIStroke", btn)
+    BS.Color = Color3.fromRGB(52, 52, 58)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+ 
+    btn.MouseEnter:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(38, 32, 32)}):Play() 
+        BS.Color = Color3.fromRGB(160, 30, 30)
     end)
-    btn.MouseLeave:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(32, 22, 22)}):Play()
+    btn.MouseLeave:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(26, 26, 30)}):Play() 
+        BS.Color = Color3.fromRGB(52, 52, 58)
     end)
-
     btn.MouseButton1Click:Connect(function() pcall(funcao) end)
 end
-
+ 
+local function CriarToggleKiller(nome, callback)
+    local btn = Instance.new("TextButton", PageKiller)
+    btn.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+    btn.Text = ""
+    Instance.new("UIStroke", btn).Color = Color3.fromRGB(52, 52, 58)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+ 
+    local label = Instance.new("TextLabel", btn)
+    label.Size = UDim2.new(0.65, 0, 1, 0)
+    label.Position = UDim2.new(0, 8, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = nome
+    label.TextColor3 = Color3.fromRGB(235, 235, 235)
+    label.Font = Enum.Font.SourceSansBold
+    label.TextSize = 12
+    label.TextXAlignment = Enum.TextXAlignment.Left
+ 
+    local toggleBg = Instance.new("Frame", btn)
+    toggleBg.Size = UDim2.new(0, 32, 0, 16)
+    toggleBg.Position = UDim2.new(1, -38, 0.5, -8)
+    toggleBg.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+    Instance.new("UICorner", toggleBg).CornerRadius = UDim.new(1, 0)
+ 
+    local circle = Instance.new("Frame", toggleBg)
+    circle.Size = UDim2.new(0, 12, 0, 12)
+    circle.Position = UDim2.new(0, 2, 0.5, -6)
+    circle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    Instance.new("UICorner", circle).CornerRadius = UDim.new(1, 0)
+ 
+    local estado = false
+    btn.MouseButton1Click:Connect(function()
+        estado = not estado
+        local pos = estado and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)
+        local bgCor = estado and Color3.fromRGB(180, 40, 40) or Color3.fromRGB(40, 40, 45)
+        local cCor = estado and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(200, 200, 200)
+ 
+        TweenService:Create(circle, TweenInfo.new(0.2), {Position = pos, BackgroundColor3 = cCor}):Play()
+        TweenService:Create(toggleBg, TweenInfo.new(0.2), {BackgroundColor3 = bgCor}):Play()
+        callback(estado)
+    end)
+end
+ 
 CriarBotaoKiller("AimBot", carregarAimbot)
 CriarBotaoKiller("Esp", carregarEsp)
 CriarBotaoKiller("Waypoint System", carregarWaypoint)
 CriarBotaoKiller("Teleporte Hub", carregarTeleporte)
 CriarBotaoKiller("Bring Hub", carregarBring)
 CriarBotaoKiller("KILLER X", carregarKillerX)
-
+ 
+CriarToggleKiller("KILLER FLY", function(estado)
+    FlyPanel.Visible = estado
+    if not estado and flying then
+        btnFlyToggle.Text = "FLY: OFF"
+        btnFlyToggle.BackgroundColor3 = Color3.fromRGB(45, 15, 15)
+        btnFlyToggle.TextColor3 = Color3.fromRGB(255, 100, 100)
+        btnFlyStr.Color = Color3.fromRGB(160, 30, 30)
+        stopFly()
+    end
+end)
+ 
+CriarToggleKiller("KILLER NOCLIP", function(estado)
+    ToggleNoclip(estado)
+end)
+ 
+ 
 local function MudarAba(AbaAtiva)
     if AbaAtiva == "Principal" then
         PageScripts.Visible = true
@@ -496,51 +676,34 @@ local function MudarAba(AbaAtiva)
         TabKillerBtn.TextColor3 = Color3.fromRGB(50, 205, 50)
     end
 end
-
+ 
 TabScriptsBtn.MouseButton1Click:Connect(function() MudarAba("Principal") end)
 TabKillerBtn.MouseButton1Click:Connect(function() MudarAba("KILLER") end)
-
-local FooterFrame = Instance.new("Frame")
+ 
+local FooterFrame = Instance.new("Frame", HubContainer)
 FooterFrame.Size = UDim2.new(0, 440, 0, 35)
-FooterFrame.Position = UDim2.new(0, 165, 0, 265) -- Ajustado para base do menu
+FooterFrame.Position = UDim2.new(0, 165, 0, 265)
 FooterFrame.BackgroundTransparency = 1
-FooterFrame.Parent = HubContainer
-
-local FooterLeft = Instance.new("TextButton")
+ 
+local FooterLeft = Instance.new("TextButton", FooterFrame)
 FooterLeft.Size = UDim2.new(0, 215, 1, 0)
 FooterLeft.BackgroundColor3 = Color3.fromRGB(40, 15, 15)
 FooterLeft.Text = "By: KILLER"
 FooterLeft.TextColor3 = Color3.fromRGB(245, 245, 245)
 FooterLeft.Font = Enum.Font.SourceSansBold
-FooterLeft.TextSize = 13
-FooterLeft.Parent = FooterFrame
-
-local FLStroke = Instance.new("UIStroke")
-FLStroke.Color = Color3.fromRGB(160, 30, 30)
-FLStroke.Parent = FooterLeft
-
-local FLeftCorner = Instance.new("UICorner")
-FLeftCorner.CornerRadius = UDim.new(0, 4)
-FLeftCorner.Parent = FooterLeft
-
-local FooterRightButton = Instance.new("TextButton")
+Instance.new("UIStroke", FooterLeft).Color = Color3.fromRGB(160, 30, 30)
+Instance.new("UICorner", FooterLeft).CornerRadius = UDim.new(0, 4)
+ 
+local FooterRightButton = Instance.new("TextButton", FooterFrame)
 FooterRightButton.Size = UDim2.new(0, 215, 1, 0)
 FooterRightButton.Position = UDim2.new(1, -215, 0, 0)
 FooterRightButton.BackgroundColor3 = Color3.fromRGB(13, 13, 15)
 FooterRightButton.Text = LINK_KEY
 FooterRightButton.TextColor3 = Color3.fromRGB(190, 190, 190)
 FooterRightButton.Font = Enum.Font.SourceSans
-FooterRightButton.TextSize = 11
-FooterRightButton.Parent = FooterFrame
-
-local FRStroke = Instance.new("UIStroke")
-FRStroke.Color = Color3.fromRGB(55, 55, 58)
-FRStroke.Parent = FooterRightButton
-
-local FRightCorner = Instance.new("UICorner")
-FRightCorner.CornerRadius = UDim.new(0, 4)
-FRightCorner.Parent = FooterRightButton
-
+Instance.new("UIStroke", FooterRightButton).Color = Color3.fromRGB(55, 55, 58)
+Instance.new("UICorner", FooterRightButton).CornerRadius = UDim.new(0, 4)
+ 
 FooterRightButton.MouseButton1Click:Connect(function()
     if setclipboard then
         pcall(function() setclipboard(LINK_KEY) end)
@@ -549,36 +712,36 @@ FooterRightButton.MouseButton1Click:Connect(function()
         FooterRightButton.Text = LINK_KEY
     end
 end)
-
+ 
 ValidarButton.MouseButton1Click:Connect(function()
     local chaveDigitada = KeyTextBox.Text
     local dadosDaKey = SISTEMA_DE_KEYS[chaveDigitada]
-
+ 
     if dadosDaKey then
         local arquivoNome = "KillerHub_Key_" .. chaveDigitada .. ".txt"
         local tempoRestante = dadosDaKey.Segundos
-
+ 
         pcall(function()
             if isfile and readfile and isfile(arquivoNome) then
                 local tempoSalvo = tonumber(readfile(arquivoNome))
                 if tempoSalvo then tempoRestante = tempoSalvo end
             end
         end)
-
+ 
         if dadosDaKey.Tipo == "TEMPO" and tempoRestante <= 0 then
             ValidarButton.Text = "Expirada!"
             task.wait(1.5)
             ValidarButton.Text = "Validar"
             return
         end
-
+ 
         KeyContainer.Visible = false
         HubContainer.Visible = true
         TabContainer.Visible = true
         SearchBox.Visible = true
-        
+ 
         EnviarNotificacao("KILLER HUB", "Obrigado por usar o KILLER HUB!")
-
+ 
         if dadosDaKey.Tipo == "LIFETIME" then
             TimeBox.Text = "LAST UPDATED: 20-06-26"
         elseif dadosDaKey.Tipo == "TEMPO" then
@@ -589,14 +752,14 @@ ValidarButton.MouseButton1Click:Connect(function()
                     local horas = math.floor((tempoRestante % 86400) / 3600)
                     local minutos = math.floor((tempoRestante % 3600) / 60)
                     local segundos = math.floor(tempoRestante % 60)
-
+ 
                     TimeBox.Text = string.format("%dD %dH %dM %dS", dias, horas, minutos, segundos)
                     pcall(function() if writefile then writefile(arquivoNome, tostring(tempoRestante)) end end)
-
+ 
                     task.wait(1)
                     tempoRestante = tempoRestante - 1
                 end
-
+ 
                 if tempoRestante <= 0 then
                     pcall(function() if writefile then writefile(arquivoNome, "0") end end)
                     TimeBox.Text = "EXPIRADO"
