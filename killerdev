@@ -36,7 +36,8 @@ local ScriptsPrincipal = {
     {Nome = "Redz Hub (Meme Sea)", URL = "https://raw.githubusercontent.com/tlredz/Scripts/refs/heads/main/main.luau", UsarTrue = false},
     {Nome = "Vender Limões", URL = "https://raw.githubusercontent.com/LynX99-9/komtolmmek2script/refs/heads/main/CyraaHub.lua", UsarTrue = false},
     {Nome = "Redz Hub (Blox Fruits)", URL = "https://raw.githubusercontent.com/UCT-hub/main/refs/heads/main/redz-v2", UsarTrue = false},
-    {Nome = "VoidWare Hub (99 Noites)", URL = "https://rawscripts.net/raw/99-Nights-in-the-Forest-SNOW-BIOME-KEYLESS-BEST-99-NIGHTS-IN-THE-FOREST-SCRIPT-VOIDWARE-47274", UsarTrue = false}
+    {Nome = "VoidWare Hub (99 Noites)", URL = "https://rawscripts.net/raw/99-Nights-in-the-Forest-SNOW-BIOME-KEYLESS-BEST-99-NIGHTS-IN-THE-FOREST-SCRIPT-VOIDWARE-47274", UsarTrue = false},
+    {Nome = "Mythixz Hub (Natural Disaster)", URL = "https://rawscripts.net/raw/Natural-Disaster-Survival-Mythixz-Hub-45698", UsarTrue = false}
 }
 
 local function carregarAimbot() loadstring(game:HttpGet("https://pastebin.com/raw/N0LZ0tWJ"))() end
