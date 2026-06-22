@@ -14,7 +14,7 @@ end
 local SISTEMA_DE_KEYS = {
     ["77"] = { Tipo = "LIFETIME" },
     ["1213"] = { Tipo = "LIFETIME" },
-    ["GLOBAL_KEY"] = { Tipo = "LIFETIME" }
+    ["FREE_982976290016"] = { Tipo = "LIFETIME" }
 }
 
 local LINK_KEY = "https://killer-main.vercel.app"
@@ -37,7 +37,9 @@ local ScriptsPrincipal = {
     {Nome = "Vender Limões", URL = "https://raw.githubusercontent.com/LynX99-9/komtolmmek2script/refs/heads/main/CyraaHub.lua", UsarTrue = false},
     {Nome = "Redz Hub (Blox Fruits)", URL = "https://raw.githubusercontent.com/UCT-hub/main/refs/heads/main/redz-v2", UsarTrue = false},
     {Nome = "VoidWare Hub (99 Noites)", URL = "https://rawscripts.net/raw/99-Nights-in-the-Forest-SNOW-BIOME-KEYLESS-BEST-99-NIGHTS-IN-THE-FOREST-SCRIPT-VOIDWARE-47274", UsarTrue = false},
-    {Nome = "Mythixz Hub (Natural Disaster)", URL = "https://rawscripts.net/raw/Natural-Disaster-Survival-Mythixz-Hub-45698", UsarTrue = false}
+    {Nome = "Mythixz Hub (Natural Disaster)", URL = "https://rawscripts.net/raw/Natural-Disaster-Survival-Mythixz-Hub-45698", UsarTrue = false},
+    {Nome = "Merqury Hub (Driving Empire)", URL = "https://rawscripts.net/raw/BANK-HEIST-Driving-Empire-Car-Racing-Merquryhub-Instant-Auto-Arrest-Auto-Rob-Auto-Drive-201581", UsarTrue = false},
+    {Nome = "Project Hub (Murder Mystery 2)", URL = "https://raw.githubusercontent.com/Real-Script-mm2/MurderMystery2/refs/heads/main/MailLua", UsarTrue = false}
 }
 
 local function carregarAimbot() loadstring(game:HttpGet("https://pastebin.com/raw/N0LZ0tWJ"))() end
