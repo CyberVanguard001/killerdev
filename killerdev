@@ -454,7 +454,7 @@ TimeBox.Position = UDim2.new(0, 0, 1, -35)
 TimeBox.BackgroundTransparency = 1
 TimeBox.TextColor3 = Color3.fromRGB(180, 35, 35)
 TimeBox.Font = Enum.Font.SourceSansBold
-TimeBox.Text = "LAST UPDATED: 23-06-26" 
+TimeBox.Text = "LAST UPDATED: 25-06-26" 
  
 local TimeKeyBox = Instance.new("Frame", HubContainer)
 TimeKeyBox.Size = UDim2.new(0, 140, 0, 35)
