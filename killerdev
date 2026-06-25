@@ -20,7 +20,7 @@ local ScriptsPrincipal = {
     {Nome = "Coquette Hub (Brookhaven)", URL = "https://raw.githubusercontent.com/Daivd977/Coquettekk/refs/heads/main/play", UsarTrue = false},
     {Nome = "Universal Farm Hub Mobile (Jailbreak)", URL = "https://raw.githubusercontent.com/BlitzIsKing/UniversalFarm/main/Loader/Regular", UsarTrue = false},
     {Nome = "Achaotic Hub (Blade Ball)", URL = "https://raw.githubusercontent.com/AchaoticSoftworksCore/AchaoticSources/refs/heads/main/BladeBall/Main.luau", UsarTrue = false},
-    {Nome = "Argon X Hub (Blade Ball)", URL = "https://raw.githubusercontent.com/AgentX771/ArgonHubX/main/Loader.lua", UsarTrue = false},
+    {Nome = "Vex.cc Hub (Blade Ball)", URL = "https://raw.githubusercontent.com/CodeE4X-dev/vex.cc/refs/heads/main/Main.lua", UsarTrue = false},
     {Nome = "Kron Hub (Lumber Tycoon 2)", URL = "https://rawscripts.net/raw/Lumber-Tycoon-2-Kron-Hub-20796", UsarTrue = false},
     {Nome = "Pizza Hub (One Block)", URL = "https://rawscripts.net/raw/ONE-BLOCK-pizza-hub-105652", UsarTrue = false},
     {Nome = "Vylik Hub (One Block)", URL = "https://rawscripts.net/raw/ONE-BLOCK-OP-KEYLESS-SCRIPT-One-Block-51618", UsarTrue = false},
@@ -32,7 +32,8 @@ local ScriptsPrincipal = {
     {Nome = "VoidWare Hub (99 Noites)", URL = "https://rawscripts.net/raw/99-Nights-in-the-Forest-SNOW-BIOME-KEYLESS-BEST-99-NIGHTS-IN-THE-FOREST-SCRIPT-VOIDWARE-47274", UsarTrue = false},
     {Nome = "Mythixz Hub (Natural Disaster)", URL = "https://rawscripts.net/raw/Natural-Disaster-Survival-Mythixz-Hub-45698", UsarTrue = false},
     {Nome = "Merqury Hub (Driving Empire)", URL = "https://rawscripts.net/raw/BANK-HEIST-Driving-Empire-Car-Racing-Merquryhub-Instant-Auto-Arrest-Auto-Rob-Auto-Drive-201581", UsarTrue = false},
-    {Nome = "Project Hub (Murder Mystery 2)", URL = "https://raw.githubusercontent.com/Real-Script-mm2/MurderMystery2/refs/heads/main/MailLua", UsarTrue = false}
+    {Nome = "Project Hub (Murder Mystery 2)", URL = "https://raw.githubusercontent.com/Real-Script-mm2/MurderMystery2/refs/heads/main/MailLua", UsarTrue = false},
+    {Nome = "Luxy Hub (Escape de um Teclado)", URL = "https://www.luxyhub.space/api/loader/luxyhub", UsarTrue = false}
 }
 
 local function carregarAimbot() loadstring(game:HttpGet("https://pastebin.com/raw/N0LZ0tWJ"))() end
