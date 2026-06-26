@@ -1,8 +1,10 @@
+
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 local LocalPlayer = Players.LocalPlayer
 while not LocalPlayer do
@@ -93,6 +95,61 @@ local function EnviarNotificacao(titulo, texto)
         NotifGui:Destroy()
     end)
 end
+
+local WalkspeedPopup = Instance.new("Frame", ScreenGui)
+WalkspeedPopup.Size = UDim2.new(0, 250, 0, 120)
+WalkspeedPopup.Position = UDim2.new(0.5, -125, 0.5, -60)
+WalkspeedPopup.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
+WalkspeedPopup.Visible = false
+WalkspeedPopup.Active = true
+WalkspeedPopup.Draggable = true
+Instance.new("UICorner", WalkspeedPopup).CornerRadius = UDim.new(0, 8)
+local WSPopupStroke = Instance.new("UIStroke", WalkspeedPopup)
+WSPopupStroke.Color = Color3.fromRGB(160, 30, 30)
+WSPopupStroke.Thickness = 1.5
+
+local WSPopupTitle = Instance.new("TextLabel", WalkspeedPopup)
+WSPopupTitle.Size = UDim2.new(1, 0, 0, 40)
+WSPopupTitle.BackgroundTransparency = 1
+WSPopupTitle.Text = "Coloque uma velocidade"
+WSPopupTitle.TextColor3 = Color3.fromRGB(235, 40, 40)
+WSPopupTitle.Font = Enum.Font.SourceSansBold
+WSPopupTitle.TextSize = 20
+
+local WSPopupInput = Instance.new("TextBox", WalkspeedPopup)
+WSPopupInput.Size = UDim2.new(0, 120, 0, 30)
+WSPopupInput.Position = UDim2.new(0.5, -60, 0.5, -10)
+WSPopupInput.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
+WSPopupInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+WSPopupInput.Font = Enum.Font.SourceSansBold
+WSPopupInput.TextSize = 16
+WSPopupInput.Text = "100"
+WSPopupInput.PlaceholderText = "100 - 300"
+Instance.new("UICorner", WSPopupInput).CornerRadius = UDim.new(0, 4)
+Instance.new("UIStroke", WSPopupInput).Color = Color3.fromRGB(180, 40, 40)
+
+local WSPopupBtn = Instance.new("TextButton", WalkspeedPopup)
+WSPopupBtn.Size = UDim2.new(0, 80, 0, 25)
+WSPopupBtn.Position = UDim2.new(0.5, -40, 1, -35)
+WSPopupBtn.BackgroundColor3 = Color3.fromRGB(26, 26, 30)
+WSPopupBtn.Text = "Aplicar"
+WSPopupBtn.TextColor3 = Color3.fromRGB(235, 235, 235)
+WSPopupBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", WSPopupBtn).CornerRadius = UDim.new(0, 4)
+Instance.new("UIStroke", WSPopupBtn).Color = Color3.fromRGB(52, 52, 58)
+
+local WalkspeedValor = 100
+WSPopupBtn.MouseButton1Click:Connect(function()
+    local num = tonumber(WSPopupInput.Text)
+    if num then
+        WalkspeedValor = math.clamp(num, 100, 300)
+        WSPopupInput.Text = tostring(WalkspeedValor)
+    else
+        WalkspeedValor = 100
+        WSPopupInput.Text = "100"
+    end
+    WalkspeedPopup.Visible = false
+end)
 
 local FlyPanel = Instance.new("Frame", ScreenGui)
 FlyPanel.Size = UDim2.new(0, 160, 0, 185)
@@ -454,7 +511,7 @@ TimeBox.Position = UDim2.new(0, 0, 1, -35)
 TimeBox.BackgroundTransparency = 1
 TimeBox.TextColor3 = Color3.fromRGB(180, 35, 35)
 TimeBox.Font = Enum.Font.SourceSansBold
-TimeBox.Text = "LAST UPDATED: 25-06-26" 
+TimeBox.Text = "LAST UPDATED: 26-06-26" 
  
 local TimeKeyBox = Instance.new("Frame", HubContainer)
 TimeKeyBox.Size = UDim2.new(0, 140, 0, 35)
@@ -589,15 +646,61 @@ local function CriarToggleKiller(nome, callback)
         callback(estado)
     end)
 end
- 
+
 CriarBotaoKiller("AimBot", carregarAimbot)
 CriarBotaoKiller("Esp", carregarEsp)
 CriarBotaoKiller("Waypoint System", carregarWaypoint)
 CriarBotaoKiller("Teleporte Hub", carregarTeleporte)
 CriarBotaoKiller("Bring Hub", carregarBring)
 CriarBotaoKiller("KILLER X", carregarKillerX)
- 
-CriarToggleKiller("KILLER FLY", function(estado)
+
+local InfJumpHabilitado = false
+local WalkspeedHabilitado = false
+
+UserInputService.JumpRequest:Connect(function()
+    if InfJumpHabilitado then
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if WalkspeedHabilitado then
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum.WalkSpeed = WalkspeedValor
+            end
+        end
+    end
+end)
+
+CriarToggleKiller("INFINITE JUMP", function(estado)
+    InfJumpHabilitado = estado
+end)
+
+CriarToggleKiller("WALKSPEED", function(estado)
+    WalkspeedHabilitado = estado
+    if estado then
+        WalkspeedPopup.Visible = true
+    else
+        WalkspeedPopup.Visible = false
+        -- Retorna a velocidade ao padrão do Roblox (16) ao desligar
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then hum.WalkSpeed = 16 end
+        end
+    end
+end)
+
+CriarToggleKiller("FLY", function(estado)
     FlyPanel.Visible = estado
     if not estado and flying then
         btnFlyToggle.Text = "FLY: OFF"
@@ -608,7 +711,7 @@ CriarToggleKiller("KILLER FLY", function(estado)
     end
 end)
  
-CriarToggleKiller("KILLER NOCLIP", function(estado)
+CriarToggleKiller("NOCLIP", function(estado)
     ToggleNoclip(estado)
 end)
  
