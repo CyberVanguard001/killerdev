@@ -23,7 +23,6 @@ local ScriptsPrincipal = {
     {Nome = "Universal Farm Hub Mobile (Jailbreak)", URL = "https://raw.githubusercontent.com/BlitzIsKing/UniversalFarm/main/Loader/Regular", UsarTrue = false},
     {Nome = "Achaotic Hub (Blade Ball)", URL = "https://raw.githubusercontent.com/AchaoticSoftworksCore/AchaoticSources/refs/heads/main/BladeBall/Main.luau", UsarTrue = false},
     {Nome = "FFJ Hub (Blade Ball)", URL = "https://raw.githubusercontent.com/FFJ1/Roblox-Exploits/main/scripts/Loader.lua", UsarTrue = false},
-    {Nome = "Ssinfonny X Hub (Blade Ball)", URL = "https://api.luarmor.net/files/v4/loaders/bac8dbbb89549b1e71fe2baedd4e9e20.lua", UsarTrue = false},
     {Nome = "Kron Hub (Lumber Tycoon 2)", URL = "https://rawscripts.net/raw/Lumber-Tycoon-2-Kron-Hub-20796", UsarTrue = false},
     {Nome = "Pizza Hub (One Block)", URL = "https://rawscripts.net/raw/ONE-BLOCK-pizza-hub-105652", UsarTrue = false},
     {Nome = "Vylik Hub (One Block)", URL = "https://rawscripts.net/raw/ONE-BLOCK-OP-KEYLESS-SCRIPT-One-Block-51618", UsarTrue = false},
